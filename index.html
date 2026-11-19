@@ -229,7 +229,7 @@ function mcStats(id) {
   [...new Set(l.map(p => p.b.ano))].forEach(y => {
     const c = campaign(id, y);
     if (c.lvl === 0) s.tit++; if (c.lvl === 1) s.vice++; if (c.lvl <= 1) s.fin++; if (c.lvl <= 2) s.semi++;
-    if (!s.best || c.lvl < s.best.lvl) s.best = {...c, ano: y};
+    if (!s.best || c.lvl < s.best.lvl || (c.lvl === s.best.lvl && c.w > s.best.w)) s.best = {...c, ano: y};
   });
   s.der = s.bat - s.vit; s.ap = pct(s.vit, s.bat); s.apr = pct(s.rv, s.r); s.rp = s.r - s.rv;
   return s;
@@ -241,7 +241,7 @@ function ufStats(uf) {
   const s = {uf, nome: D.ufs[uf] || uf, mcs: ids.length, part: 0, bat: 0, vit: 0, r: 0, rv: 0, td: 0, tt: 0, tit: 0, vice: 0, fin: 0, semi: 0, ed: 0, best: null};
   ids.forEach(id => { const m = MSTATS[id]; ['bat','vit','r','rv','td','tt','tit','vice','fin','semi'].forEach(k => s[k] += m[k]); s.part += m.ed; });
   s.ed = YEARS.filter(y => ids.some(id => PART[id].some(p => p.b.ano === y))).length;
-  YEARS.forEach(y => ids.forEach(id => { const c = campaign(id, y); if (c && (!s.best || c.lvl < s.best.lvl)) s.best = {...c, ano: y, id}; }));
+  YEARS.forEach(y => ids.forEach(id => { const c = campaign(id, y); if (c && (!s.best || c.lvl < s.best.lvl || (c.lvl === s.best.lvl && c.w > s.best.w))) s.best = {...c, ano: y, id}; }));
   // batalhas internas (mesmo estado) contam 1 vitória e 1 derrota — mantemos
   s.der = s.bat - s.vit; s.ap = pct(s.vit, s.bat); s.apr = pct(s.rv, s.r);
   s.estTit = D.estaduais.filter(e => e.uf === uf).length;
