@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duelo Nacional de MCs · Estatísticas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c0e; --panel:#16161a; --panel2:#1e1e24; --line:#2a2a32;
+  --ink:#f2f2f4; --ink2:#b4b4bd; --muted:#7c7c88;
+  --gold:#ffc83d; --gold-d:#3a2f12;
+  --win:#4c8dff; --loss:#ff8a3d; --zero:#3a3a44;
+  --alta:#ff5a5f; --media:#ffb020; --baixa:#7aa7ff; --info:#8a8a96;
+  --r:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,sans-serif}
+a{color:var(--gold);cursor:pointer;text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,.bebas{font-family:"Bebas Neue",Impact,sans-serif;letter-spacing:.5px;font-weight:400;margin:0}
+h2{font-size:30px;margin:4px 0 14px}
+h3{font-size:22px;margin:0 0 10px;color:var(--ink)}
+header{position:sticky;top:0;z-index:20;background:rgba(12,12,14,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:14px;padding:12px 20px 4px;max-width:1400px;margin:0 auto}
+.logo{font-family:"Bebas Neue";font-size:30px;line-height:1}
+.logo b{color:var(--gold);font-weight:400}
+.logo small{display:block;font-family:Inter;font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+nav{display:flex;gap:4px;overflow-x:auto;padding:6px 20px 0;max-width:1400px;margin:0 auto;scrollbar-width:none}
+nav button{background:none;border:0;color:var(--ink2);font:600 13px Inter;padding:9px 12px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav button:hover{color:var(--ink)}
+nav button.on{color:var(--gold);border-color:var(--gold)}
+nav button.admin{margin-left:auto;color:var(--muted)}
+main{max-width:1400px;margin:0 auto;padding:22px 20px 60px}
+.tab{display:none}.tab.on{display:block}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.kpi .v{font-family:"Bebas Neue";font-size:34px;line-height:1}
+.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:4px}
+.kpi .s{font-size:12px;color:var(--ink2)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.card+.card{margin-top:14px}
+.grid>.card+.card{margin-top:0}
+.muted{color:var(--muted)}.ink2{color:var(--ink2)}
+.small{font-size:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+select,input[type=search]{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;min-width:180px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.chip{display:inline-block;font:600 11px Inter;padding:2px 6px;border-radius:5px;background:var(--panel2);border:1px solid var(--line);color:var(--ink2);vertical-align:1px}
+.chip.gold{background:var(--gold-d);border-color:#6b5520;color:var(--gold)}
+.chip.win{color:var(--win);border-color:#29406b}
+.chip.loss{color:var(--loss);border-color:#6b3d20}
+.ufgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;margin:10px 0 4px}
+.ufgrid button{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:7px 0;font:700 13px Inter;cursor:pointer}
+.ufgrid button small{display:block;font:500 10px Inter;color:var(--muted)}
+.ufgrid button.on{background:var(--gold);color:#111;border-color:var(--gold)}
+.ufgrid button.on small{color:#3b2d00}
+.ufgrid button:hover{border-color:var(--gold)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--panel)}
+th.sort{cursor:pointer}th.sort:hover{color:var(--ink)}
+th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover td{background:#1b1b21}
+.tw{overflow:auto;max-height:620px;border-radius:8px}
+.mclist{display:flex;flex-wrap:wrap;gap:6px}
+.mclist button{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:6px 12px;font:600 12px Inter;cursor:pointer}
+.mclist button.on{background:var(--gold);color:#111;border-color:var(--gold)}
+.mclist button .c{color:var(--muted);font-weight:500;margin-left:4px}
+.mclist button.on .c{color:#4a3a00}
+.bars .b{display:grid;grid-template-columns:150px 1fr 56px;align-items:center;gap:8px;padding:3px 0;font-size:13px}
+.bars .t{height:14px;background:var(--panel2);border-radius:4px;overflow:hidden}
+.bars .t i{display:block;height:100%;background:var(--gold);border-radius:0 4px 4px 0}
+.bars .b .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.bars .b .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* bracket */
+.bracket{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
+.col{min-width:230px;display:flex;flex-direction:column;gap:8px}
+.col h4{margin:0 0 2px;font:600 11px Inter;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.col .stack{display:flex;flex-direction:column;justify-content:space-around;gap:8px;flex:1}
+.bt{background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden;font-size:13px}
+.bt .p{display:flex;align-items:center;gap:6px;padding:5px 8px}
+.bt .p+.p{border-top:1px solid var(--line)}
+.bt .p .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bt .p .sc{font-family:"Bebas Neue";font-size:20px;line-height:1;width:16px;text-align:right}
+.bt .p.w .nm{font-weight:700}.bt .p.w .sc{color:var(--gold)}
+.bt .p.l{color:var(--ink2)}
+.bt .tag{font-size:10px;color:var(--gold);padding:3px 8px;background:var(--gold-d);text-transform:uppercase;letter-spacing:.8px}
+.champ{background:linear-gradient(135deg,#3a2f12,#1e1e24);border:1px solid #6b5520;border-radius:10px;padding:14px;text-align:center}
+.champ .bebas{font-size:34px;color:var(--gold)}
+/* matrix */
+.mx{border-collapse:separate;border-spacing:2px}
+.mx td,.mx th{padding:0;border:0;width:30px;height:28px;text-align:center;font-size:11px;font-variant-numeric:tabular-nums}
+.mx th{background:none;position:static;color:var(--ink2);font-weight:700}
+.mx td.c{border-radius:4px;cursor:pointer;color:#fff}
+.mx td.c:hover{outline:2px solid var(--gold)}
+.mx td.e{background:#141418}
+.mx td.self{background:repeating-linear-gradient(45deg,#1a1a20 0 4px,#141418 4px 8px)}
+.legend{display:flex;gap:12px;align-items:center;font-size:12px;color:var(--ink2);flex-wrap:wrap}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+/* estaduais */
+.est td{font-size:12px}
+.est td.y{min-width:94px}
+.est td .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px}
+/* records */
+.rec{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.rec .k{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.rec .top1{display:flex;align-items:baseline;gap:8px;margin:4px 0 8px}
+.rec .top1 .bebas{font-size:28px;color:var(--gold);line-height:1}
+.rec .top1 .val{font-family:"Bebas Neue";font-size:28px;margin-left:auto}
+.rec ol{margin:0;padding-left:18px;color:var(--ink2);font-size:12.5px}
+.rec ol li{display:flex;gap:6px}
+.rec ol li span:last-child{margin-left:auto;font-variant-numeric:tabular-nums}
+.recs{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.seg{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px;gap:2px}
+.seg button{background:none;border:0;color:var(--ink2);font:600 12px Inter;padding:6px 12px;border-radius:6px;cursor:pointer}
+.seg button.on{background:var(--gold);color:#111}
+.sev{display:inline-block;font:700 10px Inter;text-transform:uppercase;padding:2px 6px;border-radius:4px;color:#111}
+.sev.alta{background:var(--alta)}.sev.média{background:var(--media)}.sev.baixa{background:var(--baixa)}.sev.info{background:var(--info)}
+.adm td{white-space:normal}
+.warn{border-left:3px solid var(--media);background:#2a2214;padding:8px 12px;border-radius:6px;font-size:13px;margin-bottom:12px}
+.note{border-left:3px solid var(--baixa);background:#141c2a;padding:8px 12px;border-radius:6px;font-size:13px;color:var(--ink2)}
+.empty{color:var(--muted);padding:20px;text-align:center}
+.tip{position:fixed;pointer-events:none;background:#000;border:1px solid var(--line);padding:6px 9px;border-radius:6px;font-size:12px;z-index:99;display:none;max-width:280px}
+.res-Campeão{color:var(--gold);font-weight:700}.res-Vice{color:#e6e6e6;font-weight:600}
+@media (max-width:900px){.g2,.g3{grid-template-columns:1fr}.bars .b{grid-template-columns:110px 1fr 48px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="logo">DUELO <b>NACIONAL</b> DE MCS<small>Estatísticas, chaveamentos e recordes</small></div>
+  </div>
+  <nav id="nav">
+    <button data-t="inicio" class="on">Início</button>
+    <button data-t="estados">Estados & MCs</button>
+    <button data-t="geral">Geral dos estados</button>
+    <button data-t="ranking">Ranking de MCs</button>
+    <button data-t="edicoes">Edições</button>
+    <button data-t="confrontos">Confrontos</button>
+    <button data-t="estaduais">Estaduais</button>
+    <button data-t="repescagem">Repescagem</button>
+    <button data-t="recordes">Recordes</button>
+    <button data-t="admin" class="admin">⚙ Admin</button>
+  </nav>
+</header>
+<main>
+  <section class="tab on" id="t-inicio"></section>
+  <section class="tab" id="t-estados"></section>
+  <section class="tab" id="t-geral"></section>
+  <section class="tab" id="t-ranking"></section>
+  <section class="tab" id="t-edicoes"></section>
+  <section class="tab" id="t-confrontos"></section>
+  <section class="tab" id="t-estaduais"></section>
+  <section class="tab" id="t-repescagem"></section>
+  <section class="tab" id="t-recordes"></section>
+  <section class="tab" id="t-admin"></section>
+</main>
+<div class="tip" id="tip"></div>
+<script src="data.js"></script>
+<script>
+"use strict";
+const D = window.DUELO;
+const $ = s => document.querySelector(s);
+const MC = Object.fromEntries(D.mcs.map(m => [m.id, m]));
+const UFS = Object.keys(D.ufs).sort();
+const nm = id => MC[id] ? MC[id].nome : id;
+const ufOf = id => MC[id] ? MC[id].uf : '?';
+const pct = (a, b) => b ? (100 * a / b) : 0;
+const f1 = x => x.toFixed(1).replace('.', ',') + '%';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mcLink = id => `<a onclick="goMC('${id.replace(/'/g,"\\'")}')">${esc(nm(id))}</a>`;
+const ufChip = uf => `<span class="chip">${uf}</span>`;
+const mcFull = id => `${mcLink(id)} ${ufChip(ufOf(id))}`;
+const labY = y => y === 2021 ? '2020/21' : String(y);
+const vagaOf = (id, y) => (D.vagas[y] || {})[id];
+const vagaChip = (id, y) => ({estadual: '<span class="chip win">Campeão estadual</span>', repescagem: '<span class="chip loss">Repescagem</span>', outra: '<span class="chip">Outra vaga</span>'})[vagaOf(id, y)] || '';
+
+/* ---------- derivações ---------- */
+const YEARS = D.years;
+const PHASES = {};               // ano -> [fases em ordem]
+D.battles.forEach(b => { (PHASES[b.ano] = PHASES[b.ano] || []); if (!PHASES[b.ano].includes(b.fase)) PHASES[b.ano].push(b.fase); });
+// duelos par-a-par (triplo vira 3 pares)
+const DUELS = [];
+D.battles.forEach(b => {
+  if (b.tipo === 'triplo') b.pares.forEach(([w, l, sw, sl]) => DUELS.push({b, w, l, sw, sl, triplo: true}));
+  else DUELS.push({b, w: b.a, l: b.b, sw: b.sa, sl: b.sb});
+});
+// participações individuais
+const PART = {};                 // mc -> [{b, won, rf, ra, opp:[...]}]
+D.mcs.forEach(m => PART[m.id] = []);
+D.battles.forEach(b => {
+  if (b.tipo === 'triplo') {
+    Object.entries(b.st).forEach(([id, [w, r, rv, td, tt]]) =>
+      PART[id].push({b, won: !!w, rf: rv, ra: r - rv, td, tt, opp: b.participantes.filter(x => x !== id)}));
+  } else {
+    PART[b.a].push({b, won: true, rf: b.sa, ra: b.sb, opp: [b.b]});
+    PART[b.b].push({b, won: false, rf: b.sb, ra: b.sa, opp: [b.a]});
+  }
+});
+const bKey = b => b.ano * 1000 + PHASES[b.ano].indexOf(b.fase) * 100 + b.ordem;
+Object.values(PART).forEach(l => l.sort((x, y) => bKey(x.b) - bKey(y.b)));
+// campanha por ano
+function campaign(id, y) {
+  const l = PART[id].filter(p => p.b.ano === y);
+  if (!l.length) return null;
+  const last = l[l.length - 1], ph = PHASES[y];
+  let depth = ph.indexOf(last.b.fase), label;
+  if (last.b.fase === 'Final') { label = last.won ? 'Campeão' : 'Vice'; depth += last.won ? 1 : 0; }
+  else label = last.won ? last.b.fase : last.b.fase;
+  const lvl = ph.length - depth; // 0 campeão, 1 vice/final, 2 semi...
+  const std = lvl === 0 ? 'Campeão' : lvl === 1 ? 'Vice' : last.b.fase;
+  return {label, lvl, std, w: l.filter(p => p.won).length, n: l.length};
+}
+function mcStats(id) {
+  const l = PART[id];
+  const s = {id, nome: nm(id), uf: ufOf(id), ed: new Set(l.map(p => p.b.ano)).size, bat: l.length, vit: l.filter(p => p.won).length,
+    r: 0, rv: 0, td: 0, tt: 0, tit: 0, vice: 0, fin: 0, semi: 0, best: null};
+  l.forEach(p => {
+    s.r += p.rf + p.ra; s.rv += p.rf;
+    if (p.b.tipo === 'triplo') { s.td += p.td; s.tt += p.tt; }
+    else { if (p.rf === 2 && p.ra === 0) s.td++; if (p.ra === 2 && p.rf === 0) s.tt++; }
+  });
+  [...new Set(l.map(p => p.b.ano))].forEach(y => {
+    const c = campaign(id, y);
+    if (c.lvl === 0) s.tit++; if (c.lvl === 1) s.vice++; if (c.lvl <= 1) s.fin++; if (c.lvl <= 2) s.semi++;
+    if (!s.best || c.lvl < s.best.lvl) s.best = {...c, ano: y};
+  });
+  s.der = s.bat - s.vit; s.ap = pct(s.vit, s.bat); s.apr = pct(s.rv, s.r); s.rp = s.r - s.rv;
+  return s;
+}
+const MSTATS = Object.fromEntries(D.mcs.map(m => [m.id, mcStats(m.id)]));
+const ACTIVE = D.mcs.filter(m => MSTATS[m.id].bat > 0).map(m => m.id);
+function ufStats(uf) {
+  const ids = ACTIVE.filter(id => ufOf(id) === uf);
+  const s = {uf, nome: D.ufs[uf] || uf, mcs: ids.length, part: 0, bat: 0, vit: 0, r: 0, rv: 0, td: 0, tt: 0, tit: 0, vice: 0, fin: 0, semi: 0, ed: 0, best: null};
+  ids.forEach(id => { const m = MSTATS[id]; ['bat','vit','r','rv','td','tt','tit','vice','fin','semi'].forEach(k => s[k] += m[k]); s.part += m.ed; });
+  s.ed = YEARS.filter(y => ids.some(id => PART[id].some(p => p.b.ano === y))).length;
+  YEARS.forEach(y => ids.forEach(id => { const c = campaign(id, y); if (c && (!s.best || c.lvl < s.best.lvl)) s.best = {...c, ano: y, id}; }));
+  // batalhas internas (mesmo estado) contam 1 vitória e 1 derrota — mantemos
+  s.der = s.bat - s.vit; s.ap = pct(s.vit, s.bat); s.apr = pct(s.rv, s.r);
+  s.estTit = D.estaduais.filter(e => e.uf === uf).length;
+  s.estDist = new Set(D.estaduais.filter(e => e.uf === uf).map(e => e.mc || e.nome.toUpperCase())).size;
+  return s;
+}
+const USTATS = Object.fromEntries(UFS.map(u => [u, ufStats(u)]));
+// estaduais helpers
+const EST = D.estaduais;
+const estKey = e => e.mc || (e.uf + '|' + e.nome.toUpperCase());
+const estName = e => e.mc ? nm(e.mc) : e.nome;
+const estBy = {}; EST.forEach(e => estBy[e.uf + '|' + e.ano] = e);
+
+/* ---------- utilidades de UI ---------- */
+const tip = $('#tip');
+document.addEventListener('mousemove', e => {
+  const t = e.target.closest('[data-tip]');
+  if (!t) { tip.style.display = 'none'; return; }
+  tip.innerHTML = t.dataset.tip; tip.style.display = 'block';
+  const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8);
+  tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+});
+function kpi(v, l, s = '') { return `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`; }
+function bars(items, fmt = v => v) {
+  const max = Math.max(1, ...items.map(i => i.v));
+  return `<div class="bars">${items.map(i => `<div class="b" data-tip="${esc(i.tip || (i.l + ': ' + fmt(i.v)))}"><div class="nm">${i.h || esc(i.l)}</div><div class="t"><i style="width:${100 * i.v / max}%"></i></div><div class="n">${fmt(i.v)}</div></div>`).join('')}</div>`;
+}
+// tabela ordenável genérica
+const TBL = {};
+function sortTable(id, cols, rows, opts = {}) {
+  const st = TBL[id] = TBL[id] || {k: opts.k || cols.find(c => c.n)?.k, d: -1};
+  const c = cols.find(c => c.k === st.k);
+  const val = r => c && c.v ? c.v(r) : r[st.k];
+  const sorted = [...rows].sort((a, b) => { const x = val(a), y = val(b); return (typeof x === 'string' ? x.localeCompare(y) : x - y) * st.d || (b.bat || 0) - (a.bat || 0); });
+  const head = cols.map(c => `<th class="sort ${c.n ? 'n' : ''}" onclick="resort('${id}','${c.k}')">${c.l}${st.k === c.k ? (st.d < 0 ? ' ▾' : ' ▴') : ''}</th>`).join('');
+  const body = sorted.map((r, i) => `<tr>${cols.map(c => `<td class="${c.n ? 'n' : ''}">${c.f ? c.f(r, i) : esc(r[c.k])}</td>`).join('')}</tr>`).join('');
+  TBL[id].render = () => { document.getElementById(id).innerHTML = sortTable(id, cols, rows, opts); };
+  return `<div class="tw"><table><thead><tr>${head}</tr></thead><tbody>${body || `<tr><td colspan="${cols.length}" class="empty">Sem dados</td></tr>`}</tbody></table></div>`;
+}
+function resort(id, k) { const st = TBL[id]; st.d = st.k === k ? -st.d : -1; st.k = k; st.render(); }
+const STATCOLS = [
+  {k: 'ed', l: 'Edições', n: 1}, {k: 'tit', l: 'Títulos', n: 1}, {k: 'vice', l: 'Vices', n: 1}, {k: 'bat', l: 'Batalhas', n: 1},
+  {k: 'vit', l: 'V', n: 1}, {k: 'der', l: 'D', n: 1}, {k: 'ap', l: '% Vit.', n: 1, f: r => f1(r.ap)},
+  {k: 'r', l: 'Rounds', n: 1}, {k: 'rv', l: 'R. venc.', n: 1}, {k: 'apr', l: '% Rounds', n: 1, f: r => f1(r.apr)},
+  {k: 'td', l: 'Deu twolala', n: 1}, {k: 'tt', l: 'Tomou twolala', n: 1}];
+function battleRow(p, me) {
+  const b = p.b;
+  const opp = p.opp.map(o => mcFull(o)).join(' / ');
+  const score = b.tipo === 'triplo' ? `<span class="chip" data-tip="${esc(b.placar)}">double three</span>` : `${p.rf}x${p.ra}`;
+  const tw = b.tipo !== 'triplo' && ((p.rf === 2 && p.ra === 0) || (p.ra === 2 && p.rf === 0)) ? ' <span class="chip gold">twolala</span>' : '';
+  return `<tr><td>${labY(b.ano)}</td><td>${b.fase}</td><td><span class="chip ${p.won ? 'win' : 'loss'}">${p.won ? (b.tipo === 'triplo' ? 'Classificou' : 'Vitória') : (b.tipo === 'triplo' ? 'Eliminado' : 'Derrota')}</span></td><td class="n">${score}${tw}</td><td>${opp}</td></tr>`;
+}
+const BTH = `<thead><tr><th>Ano</th><th>Fase</th><th>Resultado</th><th class="n">Placar</th><th>Adversário</th></tr></thead>`;
+
+/* ---------- navegação ---------- */
+const RENDER = {};
+let current = 'inicio';
+function show(t) {
+  current = t;
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  document.querySelectorAll('.tab').forEach(s => s.classList.toggle('on', s.id === 't-' + t));
+  RENDER[t](); scrollTo(0, 0);
+}
+$('#nav').addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(b.dataset.t); });
+
+/* ---------- INÍCIO ---------- */
+RENDER.inicio = () => {
+  const tot = {r: 0, tw: 0}; D.battles.forEach(b => { if (b.tipo === 'triplo') { tot.r += b.rounds; tot.tw += Object.values(b.st).reduce((a, x) => a + x[3], 0); } else { tot.r += b.sa + b.sb; if (b.sb === 0) tot.tw++; } });
+  const titUF = UFS.map(u => ({l: u, h: `${u} <span class="muted small">${esc(D.ufs[u])}</span>`, v: USTATS[u].tit})).filter(x => x.v).sort((a, b) => b.v - a.v);
+  const perYear = YEARS.map(y => ({l: labY(y), v: new Set(D.battles.filter(b => b.ano === y).flatMap(b => b.participantes || [b.a, b.b])).size}));
+  const statesYear = YEARS.map(y => ({l: labY(y), v: new Set(D.battles.filter(b => b.ano === y).flatMap(b => (b.participantes || [b.a, b.b]).map(ufOf))).size}));
+  $('#t-inicio').innerHTML = `
+  <div class="kpis">
+    ${kpi(YEARS.length, 'Edições nacionais', `${YEARS[0]} a ${YEARS[YEARS.length - 1]}`)}
+    ${kpi(D.battles.length, 'Batalhas')}
+    ${kpi(ACTIVE.length, 'MCs no nacional')}
+    ${kpi(new Set(ACTIVE.map(ufOf)).size, 'Estados representados')}
+    ${kpi(tot.r, 'Rounds disputados')}
+    ${kpi(tot.tw, 'Twolalas', f1(pct(tot.tw, D.battles.length)) + ' das batalhas')}
+    ${kpi(EST.length, 'Títulos estaduais registrados', `${D.est_years[0][1]} a ${D.est_years[D.est_years.length - 1][1]}`)}
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Campeões nacionais</h3>
+      <div class="tw"><table><thead><tr><th>Ano</th><th>Campeão</th><th>Vice</th><th class="n">Final</th><th>Campeão estadual?</th></tr></thead><tbody>
+      ${YEARS.map(y => { const c = D.champions[y]; const e = estBy[ufOf(c.campeao) + '|' + y]; const isEst = e && e.mc === c.campeao;
+        return `<tr><td><a onclick="goYear(${y})">${labY(y)}</a></td><td>🏆 ${mcFull(c.campeao)}</td><td>${mcFull(c.vice)}</td><td class="n">${c.placar}</td><td>${isEst ? '<span class="chip win">Sim</span>' : '<span class="chip">Não</span>'}</td></tr>`; }).join('')}
+      </tbody></table></div></div>
+    <div class="card"><h3>Títulos nacionais por estado</h3>${bars(titUF)}
+      <p class="muted small" style="margin-top:12px">${UFS.filter(u => !USTATS[u].tit).length} estados ainda não têm título nacional.</p></div>
+    <div class="card"><h3>MCs por edição</h3>${bars(perYear)}</div>
+    <div class="card"><h3>Estados representados por edição</h3>${bars(statesYear)}</div>
+  </div>`;
+};
+
+/* ---------- ESTADOS & MCs ---------- */
+let selUF = 'BA', selMC = null;
+function goMC(id) { selUF = ufOf(id); selMC = id; show('estados'); setTimeout(() => document.getElementById('mcprof')?.scrollIntoView({behavior: 'smooth'}), 50); }
+function goUF(uf) { selUF = uf; selMC = null; show('estados'); }
+RENDER.estados = () => {
+  const s = USTATS[selUF];
+  const ids = ACTIVE.filter(id => ufOf(id) === selUF).sort((a, b) => MSTATS[b].bat - MSTATS[a].bat || nm(a).localeCompare(nm(b)));
+  const reps = YEARS.map(y => {
+    const r = ids.filter(id => PART[id].some(p => p.b.ano === y)).map(id => ({id, c: campaign(id, y)})).sort((a, b) => a.c.lvl - b.c.lvl);
+    const e = estBy[selUF + '|' + y];
+    return {y, r, e};
+  });
+  const estRows = D.est_years.map(([y, lab]) => {
+    const e = estBy[selUF + '|' + y]; if (!e) return `<tr><td>${lab}</td><td class="muted">—</td><td></td></tr>`;
+    let nac = '';
+    if (!YEARS.includes(y)) nac = '<span class="muted small">sem dados do nacional</span>';
+    else if (e.mc && PART[e.mc].some(p => p.b.ano === y)) { const c = campaign(e.mc, y); nac = `<span class="res-${c.std}">${c.std === 'Campeão' ? '🏆 ' : ''}${c.std}</span> <span class="muted small">(${c.w}V em ${c.n})</span>`; }
+    else nac = '<span class="muted small">não disputou</span>';
+    return `<tr><td>${lab}</td><td>${e.mc ? mcLink(e.mc) : esc(e.nome)}</td><td>${nac}</td></tr>`;
+  }).join('');
+  const estCount = {}; EST.filter(e => e.uf === selUF).forEach(e => { const k = estKey(e); (estCount[k] = estCount[k] || {n: 0, e, anos: []}); estCount[k].n++; estCount[k].anos.push(e.rot); });
+  const estTop = Object.values(estCount).sort((a, b) => b.n - a.n);
+  // confrontos do estado contra outros
+  const vs = {};
+  DUELS.forEach(d => { const a = ufOf(d.w), b = ufOf(d.l);
+    if (a === selUF && b !== selUF) { (vs[b] = vs[b] || {v: 0, d: 0}).v++; }
+    if (b === selUF && a !== selUF) { (vs[a] = vs[a] || {v: 0, d: 0}).d++; } });
+  const vsRows = Object.entries(vs).map(([u, x]) => ({u, ...x, t: x.v + x.d})).sort((a, b) => b.t - a.t || b.v - a.v);
+  $('#t-estados').innerHTML = `
+  <div class="card">
+    <div class="row"><label class="f">Estado<select id="ufsel">${UFS.map(u => `<option value="${u}" ${u === selUF ? 'selected' : ''}>${u} — ${esc(D.ufs[u])}</option>`).join('')}</select></label>
+      <div class="sp"></div><span class="muted small">ou clique na sigla</span></div>
+    <div class="ufgrid">${UFS.map(u => `<button class="${u === selUF ? 'on' : ''}" onclick="goUF('${u}')">${u}<small>${USTATS[u].bat} bat.</small></button>`).join('')}</div>
+  </div>
+  <h2 style="margin-top:20px">${esc(s.nome)} <span class="chip">${selUF}</span></h2>
+  <div class="kpis">
+    ${kpi(s.tit, 'Títulos nacionais')}${kpi(s.vice, 'Vices')}${kpi(s.ed + '/' + YEARS.length, 'Edições com representante')}
+    ${kpi(s.mcs, 'MCs diferentes')}${kpi(s.bat, 'Batalhas', `${s.vit}V · ${s.der}D`)}${kpi(f1(s.ap), 'Aproveitamento')}
+    ${kpi(s.r, 'Rounds', `${s.rv} vencidos · ${f1(s.apr)}`)}${kpi(s.td, 'Twolalas dados', `${s.tt} sofridos`)}
+    ${kpi(s.best ? s.best.std : '—', 'Melhor campanha', s.best ? `${esc(nm(s.best.id))} · ${labY(s.best.ano)}` : '')}
+    ${kpi(s.estTit, 'Estaduais registrados', `${s.estDist} campeões diferentes`)}
+  </div>
+  <div class="card"><h3>MCs de ${selUF} <span class="muted small" style="font-family:Inter">— selecione para ver o perfil</span></h3>
+    <div class="mclist">${ids.map(id => `<button class="${id === selMC ? 'on' : ''}" onclick="selMC='${id}';RENDER.estados();document.getElementById('mcprof').scrollIntoView({behavior:'smooth'})">${esc(nm(id))}<span class="c">${MSTATS[id].bat}</span></button>`).join('') || '<span class="muted">Nenhum MC desse estado no nacional.</span>'}</div>
+  </div>
+  <div id="mcprof">${selMC ? mcProfile(selMC) : ''}</div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Representantes no nacional, ano a ano</h3><div class="tw"><table><thead><tr><th>Ano</th><th>MC</th><th>Campanha</th><th class="n">V/Bat.</th><th>Vaga</th></tr></thead><tbody>
+      ${reps.map(({y, r, e}) => r.length ? r.map((x, i) => `<tr><td>${i ? '' : labY(y)}</td><td>${mcLink(x.id)}</td><td class="res-${x.c.std}">${x.c.std === 'Campeão' ? '🏆 ' : ''}${x.c.std}</td><td class="n">${x.c.w}/${x.c.n}</td><td>${vagaChip(x.id, y)}</td></tr>`).join('') : `<tr><td>${labY(y)}</td><td colspan="4" class="muted">sem representante</td></tr>`).join('')}
+    </tbody></table></div></div>
+    <div class="card"><h3>Campeões estaduais de ${selUF}</h3><div class="tw"><table><thead><tr><th>Ano</th><th>Campeão estadual</th><th>No nacional do mesmo ano</th></tr></thead><tbody>${estRows}</tbody></table></div>
+      ${estTop.length ? `<h3 style="margin-top:16px">Maiores campeões estaduais</h3>${bars(estTop.slice(0, 8).map(x => ({l: estName(x.e), h: x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome), v: x.n, tip: esc(estName(x.e)) + ': ' + x.anos.join(', ')})))}` : ''}
+    </div>
+    <div class="card"><h3>${selUF} contra outros estados</h3>
+      <div class="tw"><table><thead><tr><th>Estado</th><th class="n">Batalhas</th><th class="n">V</th><th class="n">D</th><th class="n">% Vit.</th></tr></thead><tbody>
+      ${vsRows.map(x => `<tr><td><a onclick="goVS('${selUF}','${x.u}')">${x.u}</a> <span class="muted small">${esc(D.ufs[x.u])}</span></td><td class="n">${x.t}</td><td class="n">${x.v}</td><td class="n">${x.d}</td><td class="n">${f1(pct(x.v, x.t))}</td></tr>`).join('') || '<tr><td colspan=5 class="empty">Sem confrontos</td></tr>'}
+      </tbody></table></div></div>
+    <div class="card"><h3>Ranking interno de ${selUF}</h3><div id="tb-uf">${sortTable('tb-uf', [{k: 'nome', l: 'MC', f: r => mcLink(r.id)}, ...STATCOLS], ids.map(id => MSTATS[id]), {k: 'bat'})}</div></div>
+  </div>`;
+  $('#ufsel').onchange = e => goUF(e.target.value);
+};
+function mcProfile(id) {
+  const m = MC[id], s = MSTATS[id], l = PART[id];
+  const camp = [...new Set(l.map(p => p.b.ano))].map(y => ({y, c: campaign(id, y)}));
+  const est = EST.filter(e => e.mc === id);
+  const sheet = m.sheet;
+  const h2h = {}; DUELS.forEach(d => { if (d.w === id) (h2h[d.l] = h2h[d.l] || {v: 0, d: 0}).v++; if (d.l === id) (h2h[d.w] = h2h[d.w] || {v: 0, d: 0}).d++; });
+  let streak = 0, best = 0; l.forEach(p => { streak = p.won ? streak + 1 : 0; best = Math.max(best, streak); });
+  return `<div class="card" style="margin-top:14px;border-color:#6b5520">
+    <div class="row"><h2 style="margin:0">${esc(m.nome)}</h2>${ufChip(m.uf)} ${s.tit ? `<span class="chip gold">${s.tit}× campeão nacional</span>` : ''} ${est.length ? `<span class="chip win">${est.length}× campeão estadual</span>` : ''}<div class="sp"></div><a class="small" onclick="selMC=null;RENDER.estados()">fechar ✕</a></div>
+    ${m.diffs ? `<div class="warn" style="margin-top:12px">⚠ Os números abaixo foram calculados a partir dos chaveamentos e diferem da planilha de estatísticas: ${m.diffs.map(esc).join('; ')}. Veja a aba Admin.</div>` : ''}
+    <div class="kpis" style="margin-top:14px">
+      ${kpi(s.ed, 'Edições')}${kpi(s.tit, 'Títulos')}${kpi(s.vice, 'Vices')}${kpi(s.bat, 'Batalhas', `${s.vit}V · ${s.der}D`)}
+      ${kpi(f1(s.ap), 'Aproveitamento')}${kpi(s.r, 'Rounds', `${s.rv} vencidos · ${s.rp} perdidos`)}${kpi(f1(s.apr), '% Rounds')}
+      ${kpi(s.td, 'Deu twolala')}${kpi(s.tt, 'Tomou twolala')}${kpi(best, 'Maior sequência de vitórias')}
+    </div>
+    <div class="grid g2">
+      <div><h3>Campanhas</h3><table><thead><tr><th>Ano</th><th>Resultado</th><th class="n">V/Bat.</th><th>Vaga</th></tr></thead><tbody>
+        ${camp.map(({y, c}) => { const e = estBy[m.uf + '|' + y]; return `<tr><td><a onclick="goYear(${y})">${labY(y)}</a></td><td class="res-${c.std}">${c.std === 'Campeão' ? '🏆 ' : ''}${c.std}</td><td class="n">${c.w}/${c.n}</td><td>${vagaChip(id, y)}</td></tr>`; }).join('')}
+      </tbody></table>
+      ${est.length ? `<p class="small ink2" style="margin-top:10px">Títulos estaduais (${m.uf}): <b>${est.map(e => e.rot).join(', ')}</b></p>` : ''}
+      <h3 style="margin-top:14px">Adversários</h3><table><thead><tr><th>MC</th><th class="n">V</th><th class="n">D</th></tr></thead><tbody>
+        ${Object.entries(h2h).sort((a, b) => (b[1].v + b[1].d) - (a[1].v + a[1].d)).map(([o, x]) => `<tr><td>${mcFull(o)}</td><td class="n">${x.v}</td><td class="n">${x.d}</td></tr>`).join('')}
+      </tbody></table></div>
+      <div><h3>Todas as batalhas</h3><div class="tw"><table>${BTH}<tbody>${l.map(p => battleRow(p)).join('')}</tbody></table></div></div>
+    </div>
+  </div>`;
+}
+
+/* ---------- GERAL DOS ESTADOS ---------- */
+let geralMetric = 'ap';
+RENDER.geral = () => {
+  const rows = UFS.map(u => USTATS[u]);
+  const metrics = {ap: ['% vitórias (mín. 5 batalhas)', r => r.ap, f1, r => r.bat >= 5], bat: ['Batalhas', r => r.bat], vit: ['Vitórias', r => r.vit], tit: ['Títulos', r => r.tit], fin: ['Finais', r => r.fin], semi: ['Semifinais', r => r.semi], mcs: ['MCs diferentes', r => r.mcs], td: ['Twolalas dados', r => r.td], apr: ['% rounds (mín. 10 rounds)', r => r.apr, f1, r => r.r >= 10], estDist: ['Campeões estaduais diferentes', r => r.estDist]};
+  const [lab, get, fmt = v => v, filt = () => true] = metrics[geralMetric];
+  $('#t-geral').innerHTML = `
+  <h2>Estatísticas gerais por estado</h2>
+  <div class="card"><div class="row"><h3 style="margin:0">Comparativo</h3><div class="sp"></div>
+    <div class="seg">${Object.entries(metrics).map(([k, v]) => `<button class="${k === geralMetric ? 'on' : ''}" onclick="geralMetric='${k}';RENDER.geral()">${v[0].replace(/ \(.*/, '')}</button>`).join('')}</div></div>
+    <p class="muted small">${lab}</p>
+    ${bars(rows.filter(filt).map(r => ({l: r.uf, h: `<a onclick="goUF('${r.uf}')">${r.uf}</a> <span class="muted small">${esc(r.nome)}</span>`, v: get(r)})).sort((a, b) => b.v - a.v), fmt)}
+  </div>
+  <div class="card"><h3>Tabela completa</h3><p class="muted small">Clique no cabeçalho para ordenar. Batalhas entre MCs do mesmo estado contam uma vitória e uma derrota para o estado.</p>
+  <div id="tb-geral">${sortTable('tb-geral', [{k: 'uf', l: 'UF', f: r => `<a onclick="goUF('${r.uf}')">${r.uf}</a>`}, {k: 'nome', l: 'Estado'}, {k: 'mcs', l: 'MCs', n: 1}, {k: 'part', l: 'Particip.', n: 1}, {k: 'ed', l: 'Edições', n: 1}, {k: 'tit', l: 'Títulos', n: 1}, {k: 'vice', l: 'Vices', n: 1}, {k: 'fin', l: 'Finais', n: 1}, {k: 'semi', l: 'Semis', n: 1}, {k: 'bat', l: 'Batalhas', n: 1}, {k: 'vit', l: 'V', n: 1}, {k: 'der', l: 'D', n: 1}, {k: 'ap', l: '% Vit.', n: 1, f: r => f1(r.ap)}, {k: 'r', l: 'Rounds', n: 1}, {k: 'rv', l: 'R. venc.', n: 1}, {k: 'apr', l: '% Rounds', n: 1, f: r => f1(r.apr)}, {k: 'td', l: 'Twolala +', n: 1}, {k: 'tt', l: 'Twolala −', n: 1}, {k: 'estTit', l: 'Estaduais', n: 1}, {k: 'estDist', l: 'Camp. est. dif.', n: 1}, {k: 'best', l: 'Melhor campanha', v: r => r.best ? -r.best.lvl : -99, f: r => r.best ? `${r.best.std} <span class="muted small">${esc(nm(r.best.id))} ${labY(r.best.ano)}</span>` : '—'}], rows, {k: 'tit'})}</div></div>`;
+};
+
+/* ---------- RANKING MCs ---------- */
+let rkUF = '', rkQ = '';
+RENDER.ranking = () => {
+  $('#t-ranking').innerHTML = `<h2>Ranking de MCs</h2>
+  <div class="card"><div class="row" style="margin-bottom:12px">
+    <input type="search" id="rkq" placeholder="Buscar MC..." value="${esc(rkQ)}">
+    <select id="rkuf"><option value="">Todos os estados</option>${UFS.map(u => `<option ${u === rkUF ? 'selected' : ''}>${u}</option>`).join('')}</select>
+    <div class="sp"></div><span class="muted small" id="rkn"></span></div>
+    <div id="tb-rank"></div></div>`;
+  const draw = () => {
+    const rows = ACTIVE.map(id => MSTATS[id]).filter(r => (!rkUF || r.uf === rkUF) && (!rkQ || r.nome.toLowerCase().includes(rkQ.toLowerCase())));
+    $('#rkn').textContent = rows.length + ' MCs';
+    $('#tb-rank').innerHTML = sortTable('tb-rank', [{k: 'pos', l: '#', f: (r, i) => i + 1, v: r => 0}, {k: 'nome', l: 'MC', f: r => mcLink(r.id)}, {k: 'uf', l: 'UF', f: r => `<a onclick="goUF('${r.uf}')">${r.uf}</a>`}, ...STATCOLS, {k: 'best', l: 'Melhor campanha', v: r => -r.best.lvl, f: r => `${r.best.std} <span class="muted small">${labY(r.best.ano)}</span>`}], rows, {k: 'vit'});
+  };
+  draw();
+  $('#rkq').oninput = e => { rkQ = e.target.value; draw(); };
+  $('#rkuf').onchange = e => { rkUF = e.target.value; draw(); };
+};
+
+/* ---------- EDIÇÕES ---------- */
+let selYear = YEARS[YEARS.length - 1];
+function goYear(y) { selYear = y; show('edicoes'); }
+function btCard(b) {
+  if (b.tipo === 'triplo') {
+    const order = [...b.classificados, b.eliminado];
+    return `<div class="bt" data-tip="${esc(b.placar)}"><div class="tag">Double three · só o pior do round sai</div>
+      ${order.map(id => { const ok = b.classificados.includes(id); return `<div class="p ${ok ? 'w' : 'l'}"><span class="nm">${mcLink(id)}</span>${ufChip(ufOf(id))}<span class="sc">${ok ? '✓' : '✕'}</span></div>`; }).join('')}</div>`;
+  }
+  const tw = b.sb === 0;
+  return `<div class="bt">${tw ? '<div class="tag">twolala</div>' : ''}
+    <div class="p w"><span class="nm">${mcLink(b.a)}</span>${ufChip(ufOf(b.a))}<span class="sc">${b.sa}</span></div>
+    <div class="p l"><span class="nm">${mcLink(b.b)}</span>${ufChip(ufOf(b.b))}<span class="sc">${b.sb}</span></div></div>`;
+}
+RENDER.edicoes = () => {
+  const y = selYear, bs = D.battles.filter(b => b.ano === y), c = D.champions[y];
+  const parts = [...new Set(bs.flatMap(b => b.participantes || [b.a, b.b]))];
+  const byUF = {}; parts.forEach(p => (byUF[ufOf(p)] = byUF[ufOf(p)] || []).push(p));
+  const tw = bs.reduce((a, b) => a + (b.tipo === 'triplo' ? Object.values(b.st).reduce((x, v) => x + v[3], 0) : (b.sb === 0 ? 1 : 0)), 0);
+  const r = bs.reduce((a, b) => a + (b.tipo === 'triplo' ? b.rounds : b.sa + b.sb), 0);
+  const ests = EST.filter(e => e.ano === y);
+  $('#t-edicoes').innerHTML = `
+  <div class="row"><h2 style="margin:0">Edição ${labY(y)}</h2><div class="sp"></div>
+    <div class="seg">${YEARS.map(x => `<button class="${x === y ? 'on' : ''}" onclick="selYear=${x};RENDER.edicoes()">${labY(x)}</button>`).join('')}</div></div>
+  <div class="kpis" style="margin-top:14px">${kpi(parts.length, 'MCs')}${kpi(Object.keys(byUF).length, 'Estados')}${kpi(bs.length, 'Batalhas')}${kpi(r, 'Rounds')}${kpi(tw, 'Twolalas')}${kpi(bs.filter(b => b.tipo !== 'triplo' && b.sb === 1).length, 'Batalhas 2x1')}</div>
+  <div class="grid" style="grid-template-columns:minmax(0,1fr) 260px">
+    <div class="card"><div class="row" style="margin-bottom:12px"><h3 style="margin:0">Chaveamento</h3><div class="sp"></div><div class="champ row" style="padding:8px 14px;gap:10px"><span>🏆</span><span class="bebas" style="font-size:26px">${mcLink(c.campeao)}</span>${ufChip(ufOf(c.campeao))}<span class="small ink2">venceu ${esc(nm(c.vice))} (${ufOf(c.vice)}) por ${c.placar}</span></div></div><div class="bracket">
+      ${PHASES[y].map(f => `<div class="col"><h4>${f} · ${bs.filter(b => b.fase === f).length}</h4><div class="stack">${bs.filter(b => b.fase === f).map(btCard).join('')}</div></div>`).join('')}
+    </div></div>
+    <div class="card"><h3>Por estado</h3><table><tbody>${Object.entries(byUF).sort().map(([u, l]) => `<tr><td><a onclick="goUF('${u}')">${u}</a></td><td style="white-space:normal">${l.map(p => { const cc = campaign(p, y); return `${mcLink(p)} <span class="muted small">${cc.std}</span>${vagaOf(p, y) === 'repescagem' ? ' <span class="chip loss" style="font-size:9px">rep.</span>' : ''}`; }).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
+  </div>
+  ${ests.length ? `<div class="card"><h3>Campeões estaduais de ${labY(y)}</h3><div class="row" style="gap:6px">${ests.map(e => { const went = e.mc && parts.includes(e.mc); return `<span class="chip ${went ? 'win' : ''}" data-tip="${went ? 'Disputou o nacional' : 'Não aparece no chaveamento nacional'}">${e.uf} · ${esc(estName(e))}</span>`; }).join('')}</div><p class="muted small" style="margin-top:8px">Em azul: campeão estadual que disputou o nacional deste ano.</p></div>` : ''}`;
+};
+
+/* ---------- CONFRONTOS ---------- */
+let vsA = 'BA', vsB = 'MG', mA = '', mB = '';
+function goVS(a, b) { vsA = a; vsB = b; show('confrontos'); setTimeout(() => $('#vsbox').scrollIntoView({behavior: 'smooth'}), 50); }
+function color(net, tot) {
+  if (!tot) return '';
+  const t = Math.min(1, Math.abs(net) / 4);
+  if (net === 0) return 'background:#4a4a55';
+  const [r, g, b] = net > 0 ? [76, 141, 255] : [255, 138, 61];
+  return `background:rgba(${r},${g},${b},${0.3 + 0.7 * t})`;
+}
+RENDER.confrontos = () => {
+  const ufs = UFS.filter(u => USTATS[u].bat);
+  const M = {}; ufs.forEach(a => { M[a] = {}; ufs.forEach(b => M[a][b] = {v: 0, d: 0}); });
+  DUELS.forEach(d => { const a = ufOf(d.w), b = ufOf(d.l); M[a][b].v++; M[b][a].d++; });
+  const pairs = []; ufs.forEach((a, i) => ufs.slice(i + 1).forEach(b => { const x = M[a][b]; if (x.v + x.d) pairs.push({a, b, ...x, t: x.v + x.d}); }));
+  pairs.sort((p, q) => q.t - p.t);
+  const intra = ufs.map(u => ({u, n: M[u][u].v})).filter(x => x.n).sort((a, b) => b.n - a.n);
+  const list = DUELS.filter(d => { const a = ufOf(d.w), b = ufOf(d.l); return (a === vsA && b === vsB) || (a === vsB && b === vsA); }).sort((x, y) => bKey(x.b) - bKey(y.b));
+  const wa = list.filter(d => ufOf(d.w) === vsA).length, wb = list.length - wa;
+  const mcOpts = sel => ACTIVE.slice().sort((a, b) => nm(a).localeCompare(nm(b))).map(id => `<option value="${id}" ${id === sel ? 'selected' : ''}>${esc(nm(id))} (${ufOf(id)})</option>`).join('');
+  const mlist = mA && mB ? DUELS.filter(d => (d.w === mA && d.l === mB) || (d.w === mB && d.l === mA)) : [];
+  const duelRow = d => `<tr><td>${labY(d.b.ano)}</td><td>${d.b.fase}</td><td>${mcFull(d.w)}</td><td class="n">${d.triplo ? `<span class="chip" data-tip="${esc(d.b.placar)}">double three</span>` : d.sw + 'x' + d.sl}</td><td>${mcFull(d.l)}</td></tr>`;
+  const DTH = `<thead><tr><th>Ano</th><th>Fase</th><th>Vencedor</th><th class="n">Placar</th><th>Perdedor</th></tr></thead>`;
+  // revanches de MCs
+  const mp = {}; DUELS.forEach(d => { const k = [d.w, d.l].sort().join('§'); (mp[k] = mp[k] || []).push(d); });
+  const rev = Object.values(mp).filter(l => l.length > 1).sort((a, b) => b.length - a.length);
+  $('#t-confrontos').innerHTML = `
+  <h2>Confrontos entre estados</h2>
+  <div class="card"><h3>Matriz de confrontos</h3>
+    <p class="muted small">Linha = estado, coluna = adversário. O número é <b>vitórias–derrotas</b> da linha contra a coluna. Clique numa célula para ver as batalhas.</p>
+    <div class="legend" style="margin-bottom:10px"><span><span class="sw" style="background:var(--win)"></span>linha venceu mais</span><span><span class="sw" style="background:#4a4a55"></span>empate</span><span><span class="sw" style="background:var(--loss)"></span>linha perdeu mais</span><span><span class="sw" style="background:repeating-linear-gradient(45deg,#2a2a32 0 3px,#141418 3px 6px)"></span>mesmo estado</span></div>
+    <div style="overflow:auto"><table class="mx"><thead><tr><th></th>${ufs.map(u => `<th>${u}</th>`).join('')}</tr></thead><tbody>
+    ${ufs.map(a => `<tr><th>${a}</th>${ufs.map(b => { const x = M[a][b], t = x.v + x.d;
+      if (a === b) return `<td class="self ${t ? 'c' : ''}" ${t ? `onclick="goVS('${a}','${b}')" data-tip="${a}: ${x.v} batalha(s) entre MCs do próprio estado"` : ''}>${t ? x.v : ''}</td>`;
+      return t ? `<td class="c" style="${color(x.v - x.d, t)}" onclick="goVS('${a}','${b}')" data-tip="<b>${a} × ${b}</b><br>${x.v} vitória(s), ${x.d} derrota(s)">${x.v}-${x.d}</td>` : '<td class="e"></td>'; }).join('')}</tr>`).join('')}
+    </tbody></table></div>
+  </div>
+  <div class="card" id="vsbox"><h3>Estado × Estado</h3>
+    <div class="row"><select id="vsa">${UFS.map(u => `<option ${u === vsA ? 'selected' : ''}>${u}</option>`).join('')}</select><b>×</b><select id="vsb">${UFS.map(u => `<option ${u === vsB ? 'selected' : ''}>${u}</option>`).join('')}</select></div>
+    <div class="kpis" style="margin-top:12px">${kpi(list.length, 'Batalhas')}${kpi(wa, 'Vitórias ' + vsA)}${kpi(wb, 'Vitórias ' + vsB)}</div>
+    ${list.length ? `<div class="tw"><table>${DTH}<tbody>${list.map(duelRow).join('')}</tbody></table></div>` : '<div class="empty">Esses estados nunca se enfrentaram no nacional.</div>'}
+  </div>
+  <div class="card"><h3>MC × MC</h3>
+    <div class="row"><select id="ma"><option value="">Escolha um MC</option>${mcOpts(mA)}</select><b>×</b><select id="mb"><option value="">Escolha um MC</option>${mcOpts(mB)}</select></div>
+    <div style="margin-top:12px">${mA && mB ? (mlist.length ? `<p>${mcFull(mA)} <b>${mlist.filter(d => d.w === mA).length} × ${mlist.filter(d => d.w === mB).length}</b> ${mcFull(mB)}</p><table>${DTH}<tbody>${mlist.map(duelRow).join('')}</tbody></table>` : '<div class="empty">Nunca se enfrentaram.</div>') : '<div class="muted small">Selecione dois MCs.</div>'}</div>
+  </div>
+  <div class="grid g3" style="margin-top:14px">
+    <div class="card"><h3>Duelos de estados mais frequentes</h3><table><thead><tr><th>Confronto</th><th class="n">Bat.</th><th class="n">Placar</th></tr></thead><tbody>${pairs.slice(0, 15).map(p => `<tr><td><a onclick="goVS('${p.a}','${p.b}')">${p.a} × ${p.b}</a></td><td class="n">${p.t}</td><td class="n">${p.v}–${p.d}</td></tr>`).join('')}</tbody></table></div>
+    <div class="card"><h3>Revanches (MCs que se enfrentaram mais de uma vez)</h3><table><tbody>${rev.map(l => { const [x, y] = [l[0].w, l[0].l]; return `<tr><td style="white-space:normal">${mcFull(x)} × ${mcFull(y)}<div class="muted small">${l.map(d => `${labY(d.b.ano)} ${d.b.fase}: ${esc(nm(d.w))} ${d.triplo ? '(double three)' : d.sw + 'x' + d.sl}`).join(' · ')}</div></td></tr>`; }).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table></div>
+    <div class="card"><h3>Batalhas entre MCs do mesmo estado</h3><table><tbody>${intra.map(x => `<tr><td><a onclick="goVS('${x.u}','${x.u}')">${x.u}</a></td><td class="n">${x.n}</td></tr>`).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table></div>
+  </div>`;
+  $('#vsa').onchange = e => { vsA = e.target.value; RENDER.confrontos(); $('#vsbox').scrollIntoView(); };
+  $('#vsb').onchange = e => { vsB = e.target.value; RENDER.confrontos(); $('#vsbox').scrollIntoView(); };
+  $('#ma').onchange = e => { mA = e.target.value; RENDER.confrontos(); };
+  $('#mb').onchange = e => { mB = e.target.value; RENDER.confrontos(); };
+};
+
+/* ---------- ESTADUAIS ---------- */
+RENDER.estaduais = () => {
+  const cnt = {}; EST.forEach(e => { const k = estKey(e); (cnt[k] = cnt[k] || {e, n: 0, anos: []}); cnt[k].n++; cnt[k].anos.push(e.rot); });
+  const dotC = {Campeão: 'var(--gold)', Vice: '#e6e6e6', Semifinal: 'var(--win)'};
+  const cell = (u, y, lab) => {
+    const e = estBy[u + '|' + y]; if (!e) return `<td class="muted y">—</td>`;
+    const n = cnt[estKey(e)].n;
+    let dot = '', t = `${esc(estName(e))} · campeão ${u} ${lab}`;
+    if (YEARS.includes(y)) {
+      if (e.mc && PART[e.mc].some(p => p.b.ano === y)) { const c = campaign(e.mc, y); dot = `<span class="dot" style="background:${dotC[c.std] || 'var(--ink2)'}"></span>`; t += `<br>Nacional ${lab}: <b>${c.std}</b>`; }
+      else { dot = `<span class="dot" style="border:1px solid var(--muted)"></span>`; t += '<br>Não disputou o nacional'; }
+    }
+    return `<td class="y" data-tip="${t}">${dot}${e.mc ? mcLink(e.mc) : esc(e.nome)}${n > 1 ? ` <span class="muted small">${n}×</span>` : ''}</td>`;
+  };
+  const top = Object.values(cnt).sort((a, b) => b.n - a.n);
+  $('#t-estaduais').innerHTML = `<h2>Campeões estaduais</h2>
+  <div class="card"><div class="legend" style="margin-bottom:10px">Ponto = resultado no nacional do mesmo ano:
+    <span><span class="sw" style="background:var(--gold);border-radius:50%"></span>campeão</span><span><span class="sw" style="background:#e6e6e6;border-radius:50%"></span>vice</span><span><span class="sw" style="background:var(--win);border-radius:50%"></span>semifinal</span><span><span class="sw" style="background:var(--ink2);border-radius:50%"></span>outra fase</span><span><span class="sw" style="border:1px solid var(--muted);border-radius:50%"></span>não disputou</span><span>· <b>N×</b> = total de títulos estaduais</span></div>
+  <div class="tw" style="max-height:none"><table class="est"><thead><tr><th>Estado</th>${D.est_years.map(([, l]) => `<th>${l}</th>`).join('')}<th class="n">Títulos</th></tr></thead><tbody>
+  ${UFS.map(u => `<tr><td><a onclick="goUF('${u}')"><b>${u}</b></a></td>${D.est_years.map(([y, l]) => cell(u, y, l)).join('')}<td class="n">${EST.filter(e => e.uf === u).length}</td></tr>`).join('')}
+  </tbody></table></div></div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Mais títulos estaduais</h3>${bars(top.filter(x => x.n > 1).map(x => ({l: estName(x.e), h: `${x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome)} <span class="muted small">${x.e.uf}</span>`, v: x.n, tip: esc(estName(x.e)) + ' (' + x.e.uf + '): ' + x.anos.join(', ')})))}</div>
+    <div class="card"><h3>Estaduais disputados por ano</h3>${bars(D.est_years.map(([y, l]) => ({l, v: EST.filter(e => e.ano === y).length})))}</div>
+  </div>`;
+};
+
+
+/* ---------- REPESCAGEM ---------- */
+function groupStats(entries) { // entries: [{id, y}]
+  const g = {part: entries.length, mcs: new Set(entries.map(e => e.id)).size, bat: 0, vit: 0, r: 0, rv: 0, td: 0, tt: 0, lv: [0, 0, 0, 0, 0, 0], tit: 0, fin: 0};
+  entries.forEach(({id, y}) => {
+    const l = PART[id].filter(p => p.b.ano === y);
+    l.forEach(p => { g.bat++; g.vit += p.won; g.r += p.rf + p.ra; g.rv += p.rf; if (p.rf === 2 && p.ra === 0) g.td++; if (p.ra === 2 && p.rf === 0) g.tt++; });
+    const c = campaign(id, y); if (c.lvl === 0) g.tit++; if (c.lvl <= 1) g.fin++;
+    const ph = PHASES[y]; const reached = l.length + (c.lvl === 0 ? 1 : 0); // fases alcançadas
+    for (let k = 0; k < reached && k < 6; k++) g.lv[k]++;
+  });
+  g.der = g.bat - g.vit; g.ap = pct(g.vit, g.bat); g.apr = pct(g.rv, g.r); g.vpp = g.part ? g.vit / g.part : 0;
+  return g;
+}
+RENDER.repescagem = () => {
+  const ys = YEARS.filter(y => y >= 2021);
+  const R = [], E = [];
+  ys.forEach(y => Object.entries(D.vagas[y]).forEach(([id, v]) => (v === 'repescagem' ? R : E).push({id, y})));
+  const gr = groupStats(R), ge = groupStats(E);
+  const phLab = PHASES[ys[ys.length - 1]];  // 1ª fase, 2ª fase, quartas, semi, final + campeão
+  const stages = [...phLab, 'Campeão'];
+  // confronto direto repescado x campeão estadual
+  let rw = 0, ew = 0; const rvsE = [];
+  DUELS.forEach(d => { if (d.b.ano < 2021) return; const vw = vagaOf(d.w, d.b.ano), vl = vagaOf(d.l, d.b.ano);
+    if (vw === 'repescagem' && vl === 'estadual') { rw++; rvsE.push(d); } if (vw === 'estadual' && vl === 'repescagem') { ew++; rvsE.push(d); } });
+  const rr = DUELS.filter(d => d.b.ano >= 2021 && vagaOf(d.w, d.b.ano) === 'repescagem' && vagaOf(d.l, d.b.ano) === 'repescagem');
+  // por MC
+  const byMC = {}; R.forEach(({id, y}) => (byMC[id] = byMC[id] || []).push(y));
+  const mcRows = Object.entries(byMC).map(([id, yl]) => { const g = groupStats(yl.map(y => ({id, y}))); const best = yl.map(y => ({y, c: campaign(id, y)})).sort((a, b) => a.c.lvl - b.c.lvl)[0];
+    return {id, nome: nm(id), uf: ufOf(id), vezes: yl.length, anos: yl.map(labY).join(', '), bat: g.bat, vit: g.vit, der: g.der, ap: g.ap, rv: g.rv, r: g.r, td: g.td, best: best.c.lvl, bestL: `${best.c.std} <span class="muted small">${labY(best.y)}</span>`}; });
+  const byUF = {}; R.forEach(({id}) => byUF[ufOf(id)] = (byUF[ufOf(id)] || 0) + 1);
+  const cmpRow = (l, a, b, f = v => v) => `<tr><td>${l}</td><td class="n"><b>${f(a)}</b></td><td class="n">${f(b)}</td></tr>`;
+  const fx = v => v.toFixed(2).replace('.', ',');
+  $('#t-repescagem').innerHTML = `<h2>Repescagem</h2>
+  <div class="note" style="margin-bottom:14px">A partir de 2020/21 o nacional passou a ter 32 MCs, e as vagas que sobravam depois dos campeões estaduais foram preenchidas por <b>repescagem</b>. Aqui, "repescado" é todo MC que disputou o nacional de 2020/21 em diante sem ser o campeão estadual do seu estado naquele ano.</div>
+  <div class="kpis">
+    ${kpi(gr.part, 'Vagas de repescagem', `${ys.length} edições`)}${kpi(gr.mcs, 'MCs repescados diferentes')}
+    ${kpi(gr.tit, 'Títulos de repescados', R.filter(({id, y}) => D.champions[y].campeao === id).map(({id, y}) => esc(nm(id)) + ' ' + labY(y)).join(' · '))}
+    ${kpi(gr.bat, 'Batalhas', `${gr.vit}V · ${gr.der}D`)}${kpi(f1(gr.ap), 'Aproveitamento', `campeões estaduais: ${f1(ge.ap)}`)}
+    ${kpi(`${rw}–${ew}`, 'Repescado × campeão estadual', 'vitórias–derrotas no confronto direto')}
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Repescados × campeões estaduais (2020/21–${labY(ys[ys.length - 1])})</h3>
+      <table><thead><tr><th></th><th class="n">Repescados</th><th class="n">Campeões estaduais</th></tr></thead><tbody>
+      ${cmpRow('Participações', gr.part, ge.part)}${cmpRow('Batalhas', gr.bat, ge.bat)}${cmpRow('Vitórias', gr.vit, ge.vit)}
+      ${cmpRow('% vitórias', gr.ap, ge.ap, f1)}${cmpRow('% rounds vencidos', gr.apr, ge.apr, f1)}
+      ${cmpRow('Vitórias por participação', gr.vpp, ge.vpp, fx)}${cmpRow('Twolalas aplicados', gr.td, ge.td)}${cmpRow('Twolalas sofridos', gr.tt, ge.tt)}
+      ${cmpRow('Twolalas aplicados por batalha', gr.bat ? gr.td / gr.bat : 0, ge.bat ? ge.td / ge.bat : 0, fx)}
+      ${cmpRow('Finais', gr.fin, ge.fin)}${cmpRow('Títulos', gr.tit, ge.tit)}
+      </tbody></table></div>
+    <div class="card"><h3>Até onde chegam</h3><p class="muted small">% das participações de cada grupo que alcançaram a fase.</p>
+      <table><thead><tr><th>Fase alcançada</th><th class="n">Repescados</th><th class="n">Campeões estaduais</th></tr></thead><tbody>
+      ${stages.map((f, k) => `<tr><td>${f}</td><td class="n"><b>${f1(pct(gr.lv[k], gr.part))}</b> <span class="muted small">(${gr.lv[k]})</span></td><td class="n">${f1(pct(ge.lv[k], ge.part))} <span class="muted small">(${ge.lv[k]})</span></td></tr>`).join('')}
+      </tbody></table></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>Repescados por edição</h3><div class="tw"><table><thead><tr><th>Ano</th><th>MC</th><th>Campanha</th><th class="n">V/Bat.</th><th>Campeão estadual do estado no ano</th></tr></thead><tbody>
+    ${ys.map(y => R.filter(r => r.y === y).map(r => ({...r, c: campaign(r.id, y)})).sort((a, b) => a.c.lvl - b.c.lvl).map((r, i) => { const e = estBy[ufOf(r.id) + '|' + y];
+      return `<tr><td>${i ? '' : `<a onclick="goYear(${y})">${labY(y)}</a>`}</td><td>${mcFull(r.id)}</td><td class="res-${r.c.std}">${r.c.std === 'Campeão' ? '🏆 ' : ''}${r.c.std}</td><td class="n">${r.c.w}/${r.c.n}</td><td>${e ? (e.mc ? mcLink(e.mc) : esc(e.nome)) : '<span class="muted">—</span>'}</td></tr>`; }).join('')).join('')}
+  </tbody></table></div></div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Ranking dos repescados</h3><div id="tb-rep">${sortTable('tb-rep', [{k: 'nome', l: 'MC', f: r => mcLink(r.id)}, {k: 'uf', l: 'UF'}, {k: 'vezes', l: 'Vezes', n: 1}, {k: 'anos', l: 'Anos'}, {k: 'bat', l: 'Bat.', n: 1}, {k: 'vit', l: 'V', n: 1}, {k: 'der', l: 'D', n: 1}, {k: 'ap', l: '% Vit.', n: 1, f: r => f1(r.ap)}, {k: 'td', l: 'Twolala +', n: 1}, {k: 'best', l: 'Melhor', v: r => -r.best, f: r => r.bestL}], mcRows, {k: 'vit'})}</div></div>
+    <div class="card"><h3>Repescados por estado</h3>${bars(Object.entries(byUF).map(([u, v]) => ({l: u, h: `<a onclick="goUF('${u}')">${u}</a> <span class="muted small">${esc(D.ufs[u])}</span>`, v})).sort((a, b) => b.v - a.v))}</div>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Repescado × campeão estadual (${rw}–${ew})</h3><div class="tw"><table><thead><tr><th>Ano</th><th>Fase</th><th>Vencedor</th><th class="n">Placar</th><th>Perdedor</th></tr></thead><tbody>
+      ${rvsE.sort((a, b) => bKey(a.b) - bKey(b.b)).map(d => `<tr><td>${labY(d.b.ano)}</td><td>${d.b.fase}</td><td>${mcFull(d.w)} ${vagaOf(d.w, d.b.ano) === 'repescagem' ? '<span class="chip loss">rep.</span>' : ''}</td><td class="n">${d.sw}x${d.sl}</td><td>${mcFull(d.l)} ${vagaOf(d.l, d.b.ano) === 'repescagem' ? '<span class="chip loss">rep.</span>' : ''}</td></tr>`).join('')}
+    </tbody></table></div></div>
+    <div class="card"><h3>Repescado × repescado (${rr.length})</h3><div class="tw"><table><thead><tr><th>Ano</th><th>Fase</th><th>Vencedor</th><th class="n">Placar</th><th>Perdedor</th></tr></thead><tbody>
+      ${rr.sort((a, b) => bKey(a.b) - bKey(b.b)).map(d => `<tr><td>${labY(d.b.ano)}</td><td>${d.b.fase}</td><td>${mcFull(d.w)}</td><td class="n">${d.sw}x${d.sl}</td><td>${mcFull(d.l)}</td></tr>`).join('') || '<tr><td colspan=5 class="empty">Nenhum</td></tr>'}
+    </tbody></table></div></div>
+  </div>`;
+};
+
+/* ---------- RECORDES ---------- */
+let recMode = 'nac';
+function recCard(k, items, fmt = v => v, note = '') {
+  if (!items.length) return '';
+  const top = items[0];
+  return `<div class="rec"><div class="k">${k}</div><div class="top1"><span class="bebas">${top.h}</span><span class="val">${fmt(top.v)}</span></div>
+  <ol start="2">${items.slice(1, 6).map(i => `<li><span>${i.h}</span><span>${fmt(i.v)}</span></li>`).join('')}</ol>${note ? `<div class="muted small" style="margin-top:6px">${note}</div>` : ''}</div>`;
+}
+function rankBy(list, get, filt = () => true) { return list.filter(filt).map(x => ({...x, v: get(x)})).filter(x => x.v > 0).sort((a, b) => b.v - a.v); }
+RENDER.recordes = () => {
+  const M = ACTIVE.map(id => ({...MSTATS[id], h: `${mcLink(id)} <span class="chip">${ufOf(id)}</span>`}));
+  const U = UFS.map(u => ({...USTATS[u], h: `<a onclick="goUF('${u}')">${u}</a>`}));
+  // sequências
+  const streak = id => { let s = 0, b = 0; PART[id].forEach(p => { s = p.won ? s + 1 : 0; b = Math.max(b, s); }); return b; };
+  const lose = id => { let s = 0, b = 0; PART[id].forEach(p => { s = !p.won ? s + 1 : 0; b = Math.max(b, s); }); return b; };
+  const consecEd = id => { const ys = [...new Set(PART[id].map(p => YEARS.indexOf(p.b.ano)))].sort((a, b) => a - b); let s = 0, b = 0, prev = -9; ys.forEach(i => { s = i === prev + 1 ? s + 1 : 1; prev = i; b = Math.max(b, s); }); return b; };
+  // campanhas de campeões
+  const champC = YEARS.map(y => { const id = D.champions[y].campeao; const l = PART[id].filter(p => p.b.ano === y);
+    return {id, y, h: `${mcLink(id)} <span class="chip">${labY(y)}</span>`, rp: l.reduce((a, p) => a + p.ra, 0), tw: l.filter(p => p.rf === 2 && p.ra === 0).length, n: l.length}; });
+  const perEd = []; ACTIVE.forEach(id => [...new Set(PART[id].map(p => p.b.ano))].forEach(y => { const l = PART[id].filter(p => p.b.ano === y); perEd.push({h: `${mcLink(id)} <span class="chip">${labY(y)}</span>`, tw: l.filter(p => p.rf === 2 && p.ra === 0 && p.b.tipo !== 'triplo').length, rv: l.reduce((a, p) => a + p.rf, 0)}); }));
+  const finals = YEARS.map(y => D.battles.find(b => b.ano === y && b.fase === 'Final'));
+  const finUF = {}; finals.forEach(f => [f.a, f.b].forEach(p => finUF[ufOf(p)] = (finUF[ufOf(p)] || 0) + 1));
+  const ufFinalPair = finals.filter(f => ufOf(f.a) === ufOf(f.b));
+  // estaduais
+  const cnt = {}; EST.forEach(e => { const k = estKey(e); (cnt[k] = cnt[k] || {e, n: 0, ys: []}); cnt[k].n++; cnt[k].ys.push(e.ano); });
+  const EC = Object.values(cnt).map(x => ({...x, h: `${x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome)} <span class="chip">${x.e.uf}</span>`}));
+  const ESEQ = D.est_years.map(([y]) => y);
+  const consec = x => { const idx = x.ys.map(y => ESEQ.indexOf(y)).sort((a, b) => a - b); let s = 0, b = 0, p = -9; idx.forEach(i => { s = i === p + 1 ? s + 1 : 1; p = i; b = Math.max(b, s); }); return b; };
+  const UE = UFS.map(u => { const l = EST.filter(e => e.uf === u); const c = {}; l.forEach(e => c[estKey(e)] = (c[estKey(e)] || 0) + 1);
+    const mx = Math.max(0, ...Object.values(c)); return {uf: u, h: `<a onclick="goUF('${u}')">${u}</a>`, n: l.length, dist: Object.keys(c).length, dom: l.length >= 4 ? pct(mx, l.length) : 0,
+      nac: l.filter(e => e.mc && YEARS.includes(e.ano) && D.champions[e.ano].campeao === e.mc).length,
+      went: l.filter(e => e.mc && YEARS.includes(e.ano) && PART[e.mc].some(p => p.b.ano === e.ano)).map(e => campaign(e.mc, e.ano)).filter(c => c.lvl <= 2).length}; });
+  const doubleCh = EST.filter(e => e.mc && YEARS.includes(e.ano) && D.champions[e.ano].campeao === e.mc);
+  const estThenNac = ACTIVE.filter(id => EST.some(e => e.mc === id)).map(id => ({id, h: `${mcLink(id)} <span class="chip">${ufOf(id)}</span>`, v: EST.filter(e => e.mc === id).length + MSTATS[id].tit * 1, est: EST.filter(e => e.mc === id).length, tit: MSTATS[id].tit}));
+  const nac = `
+    <h3>MCs</h3><div class="recs">
+    ${recCard('Mais títulos nacionais', rankBy(M, x => x.tit))}
+    ${recCard('Mais finais', rankBy(M, x => x.fin))}
+    ${recCard('Mais semifinais', rankBy(M, x => x.semi))}
+    ${recCard('Mais edições disputadas', rankBy(M, x => x.ed))}
+    ${recCard('Mais batalhas disputadas', rankBy(M, x => x.bat))}
+    ${recCard('Mais batalhas vencidas', rankBy(M, x => x.vit))}
+    ${recCard('Mais rounds disputados', rankBy(M, x => x.r))}
+    ${recCard('Mais rounds vencidos', rankBy(M, x => x.rv))}
+    ${recCard('Mais twolalas aplicados', rankBy(M, x => x.td))}
+    ${recCard('Mais twolalas sofridos', rankBy(M, x => x.tt))}
+    ${recCard('Melhor aproveitamento (mín. 5 batalhas)', rankBy(M, x => x.ap, x => x.bat >= 5), f1)}
+    ${recCard('Melhor % de rounds (mín. 12 rounds)', rankBy(M, x => x.apr, x => x.r >= 12), f1)}
+    ${recCard('Maior sequência de vitórias', rankBy(M, x => streak(x.id)), v => v, 'Batalhas seguidas sem perder, atravessando edições')}
+    ${recCard('Mais edições consecutivas', rankBy(M, x => consecEd(x.id)))}
+    ${recCard('Mais derrotas', rankBy(M, x => x.der))}
+    ${recCard('Mais twolalas em uma única edição', perEd.map(x => ({...x, v: x.tw})).filter(x => x.v).sort((a, b) => b.v - a.v))}
+    ${recCard('Mais rounds vencidos em uma edição', perEd.map(x => ({...x, v: x.rv})).sort((a, b) => b.v - a.v))}
+    ${recCard('Campeão que perdeu menos rounds', champC.map(x => ({...x, v: x.rp})).sort((a, b) => a.v - b.v || b.n - a.n), v => v + (v === 1 ? ' round' : ' rounds'), 'Rounds cedidos na campanha do título')}
+    ${recCard('Campeão com mais twolalas na campanha', champC.map(x => ({...x, v: x.tw})).sort((a, b) => b.v - a.v))}
+    ${recCard('Mais títulos estaduais + nacionais', estThenNac.sort((a, b) => b.v - a.v), v => v)}
+    ${recCard('Mais vezes na repescagem', Object.entries(Object.entries(D.vagas).reduce((a, [y, o]) => { Object.entries(o).forEach(([id, v]) => { if (v === 'repescagem') a[id] = (a[id] || 0) + 1; }); return a; }, {})).map(([id, v]) => ({h: `${mcLink(id)} <span class="chip">${ufOf(id)}</span>`, v})).sort((a, b) => b.v - a.v))}
+    ${recCard('Mais vitórias como repescado', Object.entries(Object.entries(D.vagas).reduce((a, [y, o]) => { Object.entries(o).forEach(([id, v]) => { if (v === 'repescagem') a[id] = (a[id] || 0) + PART[id].filter(p => p.b.ano === +y && p.won).length; }); return a; }, {})).map(([id, v]) => ({h: `${mcLink(id)} <span class="chip">${ufOf(id)}</span>`, v})).filter(x => x.v).sort((a, b) => b.v - a.v))}
+    </div>
+    <h3 style="margin-top:20px">Estados</h3><div class="recs">
+    ${recCard('Mais títulos nacionais', rankBy(U, x => x.tit))}
+    ${recCard('Mais finais', Object.entries(finUF).map(([u, v]) => ({h: `<a onclick="goUF('${u}')">${u}</a>`, v})).sort((a, b) => b.v - a.v))}
+    ${recCard('Mais batalhas', rankBy(U, x => x.bat))}
+    ${recCard('Mais vitórias', rankBy(U, x => x.vit))}
+    ${recCard('Melhor aproveitamento (mín. 10 batalhas)', rankBy(U, x => x.ap, x => x.bat >= 10), f1)}
+    ${recCard('Mais MCs diferentes no nacional', rankBy(U, x => x.mcs))}
+    ${recCard('Mais twolalas aplicados', rankBy(U, x => x.td))}
+    ${recCard('Mais participações (MC × edição)', rankBy(U, x => x.part))}
+    </div>
+    <div class="card" style="margin-top:14px"><h3>Curiosidades</h3><ul class="ink2" style="margin:0;padding-left:18px;line-height:1.9">
+      <li>Finais decididas em 2x1: <b>${finals.filter(f => f.sb === 1).length}</b> de ${finals.length}; em twolala: <b>${finals.filter(f => f.sb === 0).length}</b> (${finals.filter(f => f.sb === 0).map(f => labY(f.ano) + ' ' + esc(nm(f.a))).join(', ')}).</li>
+      <li>Finais entre MCs do mesmo estado: ${ufFinalPair.length ? ufFinalPair.map(f => `${labY(f.ano)} (${ufOf(f.a)}: ${esc(nm(f.a))} × ${esc(nm(f.b))})`).join(', ') : 'nenhuma'}.</li>
+      <li>Campeões que também eram o campeão estadual do ano: <b>${doubleCh.length}</b> de ${YEARS.length} (${doubleCh.map(e => labY(e.ano) + ' ' + esc(nm(e.mc))).join(', ')}).</li>
+      <li>Campeões vindos da repescagem: ${YEARS.filter(y => vagaOf(D.champions[y].campeao, y) === 'repescagem').map(y => esc(nm(D.champions[y].campeao)) + ' (' + labY(y) + ')').join(', ') || 'nenhum'}.</li>
+      <li>Bicampeões nacionais: ${M.filter(x => x.tit >= 2).map(x => x.h).join(', ') || 'nenhum'}.</li>
+      <li>Estados com MC campeão nacional: <b>${U.filter(x => x.tit).length}</b> de ${UFS.length}.</li>
+      <li>Double three (só o pior do round é eliminado): 2016 — TH e Nicolas Walter passaram, Vieira caiu; 2017 — Menor e Miliano passaram, Blackout caiu.</li>
+    </ul></div>`;
+  const est = `
+    <h3>MCs</h3><div class="recs">
+    ${recCard('Mais títulos estaduais', EC.map(x => ({...x, v: x.n})).sort((a, b) => b.v - a.v))}
+    ${recCard('Maior sequência de títulos estaduais seguidos', EC.map(x => ({...x, v: consec(x)})).filter(x => x.v > 1).sort((a, b) => b.v - a.v))}
+    ${recCard('Campeão estadual + campeão nacional no mesmo ano', doubleCh.map(e => ({h: `${mcLink(e.mc)} <span class="chip">${labY(e.ano)}</span>`, v: 1})), () => '🏆')}
+    </div>
+    <h3 style="margin-top:20px">Estados</h3><div class="recs">
+    ${recCard('Mais estaduais registrados', UE.map(x => ({...x, v: x.n})).sort((a, b) => b.v - a.v))}
+    ${recCard('Mais campeões estaduais diferentes', UE.map(x => ({...x, v: x.dist})).sort((a, b) => b.v - a.v))}
+    ${recCard('Maior domínio de um único MC', UE.map(x => ({...x, v: x.dom})).filter(x => x.v).sort((a, b) => b.v - a.v), f1, '% dos estaduais do estado vencidos pelo maior campeão (mín. 4 estaduais)')}
+    ${recCard('Menor domínio (mais rotatividade)', UE.filter(x => x.n >= 6).map(x => ({...x, v: x.dist / x.n * 100})).sort((a, b) => b.v - a.v), f1, 'Campeões diferentes ÷ estaduais (mín. 6)')}
+    ${recCard('Campeões estaduais que chegaram à semifinal nacional', UE.map(x => ({...x, v: x.went})).sort((a, b) => b.v - a.v))}
+    ${recCard('Campeões estaduais que ganharam o nacional', UE.map(x => ({...x, v: x.nac})).sort((a, b) => b.v - a.v))}
+    </div>`;
+  $('#t-recordes').innerHTML = `<div class="row"><h2 style="margin:0">Recordes</h2><div class="sp"></div><div class="seg"><button class="${recMode === 'nac' ? 'on' : ''}" onclick="recMode='nac';RENDER.recordes()">Duelo Nacional</button><button class="${recMode === 'est' ? 'on' : ''}" onclick="recMode='est';RENDER.recordes()">Estaduais</button></div></div>
+  <div style="margin-top:14px">${recMode === 'nac' ? nac : est}</div>`;
+};
+
+/* ---------- ADMIN ---------- */
+let admSev = '', admCat = '';
+RENDER.admin = () => {
+  const I = D.inconsist;
+  const sevs = ['alta', 'média', 'baixa', 'info'], cats = [...new Set(I.map(i => i.cat))];
+  const rows = I.filter(i => (!admSev || i.sev === admSev) && (!admCat || i.cat === admCat));
+  $('#t-admin').innerHTML = `<h2>Admin · Inconsistências</h2>
+  <div class="note" style="margin-bottom:14px">Verificações automáticas cruzando a planilha de estatísticas, os chaveamentos e os campeões estaduais. <b>Alta</b> = provável erro de dado; <b>média</b> = número que não fecha; <b>baixa</b> = grafia/digitação; <b>info</b> = pode estar certo, mas vale conferir.</div>
+  <div class="kpis">${sevs.map(s => kpi(I.filter(i => i.sev === s).length, `<span class="sev ${s}">${s}</span>`)).join('')}</div>
+  <div class="card"><div class="row" style="margin-bottom:10px">
+    <div class="seg"><button class="${!admSev ? 'on' : ''}" onclick="admSev='';RENDER.admin()">Todas</button>${sevs.map(s => `<button class="${admSev === s ? 'on' : ''}" onclick="admSev='${s}';RENDER.admin()">${s}</button>`).join('')}</div>
+    <select onchange="admCat=this.value;RENDER.admin()"><option value="">Todas as categorias</option>${cats.map(c => `<option ${c === admCat ? 'selected' : ''}>${c}</option>`).join('')}</select>
+    <div class="sp"></div><span class="muted small">${rows.length} itens</span></div>
+    <div class="tw"><table class="adm"><thead><tr><th>Nível</th><th>Categoria</th><th>Ano</th><th>Descrição</th></tr></thead><tbody>
+    ${rows.map(i => `<tr><td><span class="sev ${i.sev}">${i.sev}</span></td><td>${esc(i.cat)}</td><td>${i.ano ? (i.ano === 2021 ? '2020/21' : i.ano) : '—'}</td><td>${esc(i.msg)}</td></tr>`).join('')}
+    </tbody></table></div></div>
+  ${rows.length ? '' : '<div class="card empty">✔ Nenhuma inconsistência pendente neste filtro.</div>'}
+  <div class="card"><h3>Correções já aplicadas (19/11/2026)</h3><ul class="ink2" style="margin:0;padding-left:18px;line-height:1.8">
+    <li>Onze (AL): rounds 4 → 5, como no chaveamento. Snart (CE): rounds vencidos 3 → 2.</li>
+    <li>Incluído o double three de 2016 (fase preliminar): TH × Nicolas Walter × Vieira — Vieira eliminado no 1º round. Estatísticas de TH e Nicolas Walter ajustadas (+1 batalha, +1 vitória e +1 round vencido cada).</li>
+    <li>Nomes padronizados: Tagrela → Tagarela, Koel → Koell, Martzin → Martizin, Vincius ZN → Vinicius ZN, Tonhao → Tonhão, "Torris RN)" → "Torris (RN)", Biro Brio → Biro Biro, Kadosh → Kadoshi, Aleson → Alesson; espaços extras removidos (ES, CH, Will, Miliano).</li>
+    <li>Nomes oficiais seguindo os estaduais (mesma pessoa nas três planilhas): Jeff → Jeffe (MA), Dre → Drê Araujo (SC), Felinho → Felinho Nordestino (PI), JP → JP da Norte (DF), Big Leo → Big Léo (MG).</li>
+    <li>Confirmado: existem dois MCs chamados NG (MG e SE), Vitu (PE e SC) e Jeffe (MA e DF) — tratados como MCs diferentes.</li>
+    <li>Confirmado: em 2018 e 2019 vários campeões estaduais não foram ao nacional; desde 2020/21 as vagas restantes da chave de 32 são de repescagem (aba Repescagem).</li>
+  </ul></div>
+  <div class="card"><h3>Como os dados foram interpretados</h3><ul class="ink2" style="margin:0;padding-left:18px;line-height:1.8">
+    <li>As estatísticas do site são <b>recalculadas a partir dos chaveamentos</b>. Quando a planilha de estatísticas tem outro número, ele aparece aqui como "Estatística".</li>
+    <li>O estado de cada MC vem da planilha de estatísticas (coluna ESTADO). Nos anos sem sigla no chaveamento, o MC é ligado pelo nome.</li>
+    <li>Twolala = vitória por 2x0. Uma batalha 2x1 soma 3 rounds disputados.</li>
+    <li>Double three conta como 1 batalha para cada um dos 3: os 2 classificados ganham, o eliminado perde.</li>
+    <li>2016 (fase preliminar): TH × Nicolas Walter × Vieira — Vieira caiu no 1º round. Rounds: TH 1/1, Nicolas Walter 1/1, Vieira 0/1.</li>
+    <li>2017 (1ª fase): Menor × Miliano × Blackout — Menor 1x0 nos dois, depois Miliano 2x0 Blackout. Rounds: Menor 1/1, Miliano 2/3 (twolala sobre Blackout), Blackout 0/3.</li>
+    <li>Nos confrontos entre estados, o double three entra como duelos: 2016 TH (SP) e Nicolas Walter (RS) venceram Vieira (AC); 2017 Menor (AM) venceu Miliano (MS) e Blackout (PA), e Miliano (MS) venceu Blackout (PA).</li>
+    <li>2020/2021 aparece como uma única edição (2020/21).</li>
+    <li>Em 2012–2016 a primeira rodada (8 MCs) foi tratada como Quartas de final.</li>
+    <li>Campeões estaduais de 2026 já estão na planilha, mas ainda não há chaveamento nacional de 2026.</li>
+  </ul></div>`;
+};
+
+RENDER.inicio();
+</script>
+</body>
+</html>
