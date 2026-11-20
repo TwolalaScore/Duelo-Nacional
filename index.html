@@ -73,11 +73,6 @@ tbody tr:hover td{background:#1b1b21}
 .mclist button.on{background:var(--gold);color:#111;border-color:var(--gold)}
 .mclist button .c{color:var(--muted);font-weight:500;margin-left:4px}
 .mclist button.on .c{color:#4a3a00}
-.bars .b{display:grid;grid-template-columns:150px 1fr 56px;align-items:center;gap:8px;padding:3px 0;font-size:13px}
-.bars .t{height:14px;background:var(--panel2);border-radius:4px;overflow:hidden}
-.bars .t i{display:block;height:100%;background:var(--gold);border-radius:0 4px 4px 0}
-.bars .b .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2)}
-.bars .b .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* bracket */
 .bracket{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
 .col{min-width:230px;display:flex;flex-direction:column;gap:8px}
@@ -126,10 +121,26 @@ tbody tr:hover td{background:#1b1b21}
 .warn{border-left:3px solid var(--media);background:#2a2214;padding:8px 12px;border-radius:6px;font-size:13px;margin-bottom:12px}
 .note{border-left:3px solid var(--baixa);background:#141c2a;padding:8px 12px;border-radius:6px;font-size:13px;color:var(--ink2)}
 .empty{color:var(--muted);padding:20px;text-align:center}
+.rl .ri{display:flex;align-items:center;gap:12px;padding:8px 2px;border-bottom:1px solid var(--line)}
+.rl .ri:last-child{border-bottom:0}
+.rl .rp{font-family:"Bebas Neue";font-size:22px;color:var(--muted);width:30px}
+.rl .rp.g{color:var(--gold)}
+.rl .rn{flex:1;font-weight:600;min-width:0}
+.rl .rv{font-family:"Bebas Neue";font-size:30px;line-height:1;color:var(--ink);text-align:right}
+.rl .rv small{font-family:Inter;font-size:11px;color:var(--muted);margin-left:5px;text-transform:uppercase;letter-spacing:.8px}
+.vsx td{padding:8px 6px}
+.vsx td.l{text-align:right;width:40%}
+.vsx td.r{width:40%}
+.vsx td.r .flag{margin:0 6px 0 5px}
+.vsx td.sc{font-family:"Bebas Neue";font-size:26px;line-height:1;text-align:center;width:34px;color:var(--ink2)}
+.vsx td.sc.w{color:var(--gold)}
+.vsx td.x{text-align:center;color:var(--muted);width:14px}
+.flag{width:18px;height:13px;object-fit:cover;border-radius:2px;vertical-align:-2px;margin-right:5px;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+.mx th .flag{margin:0 0 2px}
+.ufgrid button .flag{display:block;margin:0 auto 3px;width:22px;height:15px}
 .tip{position:fixed;pointer-events:none;background:#000;border:1px solid var(--line);padding:6px 9px;border-radius:6px;font-size:12px;z-index:99;display:none;max-width:280px}
 .res-Campeão{color:var(--gold);font-weight:700}.res-Vice{color:#e6e6e6;font-weight:600}
-@media (max-width:900px){.g2,.g3{grid-template-columns:1fr}.bars .b{grid-template-columns:110px 1fr 48px}}
-</style>
+@media (max-width:900px){.g2,.g3{grid-template-columns:1fr}</style>
 </head>
 <body>
 <header>
@@ -175,7 +186,9 @@ const pct = (a, b) => b ? (100 * a / b) : 0;
 const f1 = x => x.toFixed(1).replace('.', ',') + '%';
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mcLink = id => `<a onclick="goMC('${id.replace(/'/g,"\\'")}')">${esc(nm(id))}</a>`;
-const ufChip = uf => `<span class="chip">${uf}</span>`;
+const FLAGF = {AC:'Bandeira do Acre.svg',AL:'Bandeira de Alagoas.svg',AP:'Bandeira do Amapá.svg',AM:'Bandeira do Amazonas.svg',BA:'Bandeira da Bahia.svg',CE:'Bandeira do Ceará.svg',DF:'Bandeira do Distrito Federal (Brasil).svg',ES:'Bandeira do Espírito Santo.svg',GO:'Flag of Goiás.svg',MA:'Bandeira do Maranhão.svg',MT:'Bandeira de Mato Grosso.svg',MS:'Bandeira de Mato Grosso do Sul.svg',MG:'Bandeira de Minas Gerais.svg',PA:'Bandeira do Pará.svg',PB:'Bandeira da Paraíba.svg',PR:'Bandeira do Paraná.svg',PE:'Bandeira de Pernambuco.svg',PI:'Bandeira do Piauí.svg',RJ:'Bandeira do estado do Rio de Janeiro.svg',RN:'Bandeira do Rio Grande do Norte.svg',RS:'Bandeira do Rio Grande do Sul.svg',RO:'Bandeira de Rondônia.svg',RR:'Bandeira de Roraima.svg',SC:'Bandeira de Santa Catarina.svg',SP:'Bandeira do estado de São Paulo.svg',SE:'Bandeira de Sergipe.svg',TO:'Bandeira do Tocantins.svg'};
+const flag = uf => FLAGF[uf] ? `<img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(FLAGF[uf])}?width=60" alt="" loading="lazy" onerror="this.remove()">` : '';
+const ufChip = uf => `<span class="chip">${flag(uf)}${uf}</span>`;
 const mcFull = id => `${mcLink(id)} ${ufChip(ufOf(id))}`;
 const labY = y => y === 2021 ? '2020/21' : String(y);
 const vagaOf = (id, y) => (D.vagas[y] || {})[id];
@@ -265,9 +278,13 @@ document.addEventListener('mousemove', e => {
   tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px';
 });
 function kpi(v, l, s = '') { return `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`; }
-function bars(items, fmt = v => v) {
-  const max = Math.max(1, ...items.map(i => i.v));
-  return `<div class="bars">${items.map(i => `<div class="b" data-tip="${esc(i.tip || (i.l + ': ' + fmt(i.v)))}"><div class="nm">${i.h || esc(i.l)}</div><div class="t"><i style="width:${100 * i.v / max}%"></i></div><div class="n">${fmt(i.v)}</div></div>`).join('')}</div>`;
+function bars(items, fmt = v => v, opt = {}) {
+  return rankList(items.map(i => ({h: i.h || esc(i.l), v: i.v, fv: fmt(i.v), sub: i.sub})), opt.unit || (() => ''), opt.ranked !== false);
+}
+function rankList(items, unit, ranked = false) {
+  let pos = 0, prev = null;
+  return `<div class="rl">${items.map((it, i) => { if (it.v !== prev) { pos = i + 1; prev = it.v; }
+    return `<div class="ri">${ranked ? `<span class="rp ${pos === 1 ? 'g' : ''}">${pos}º</span>` : ''}<div class="rn">${it.h}${it.sub ? `<div class="muted small">${it.sub}</div>` : ''}</div><div class="rv">${it.fv ?? it.v}<small>${unit(it.v)}</small></div></div>`; }).join('')}</div>`;
 }
 // tabela ordenável genérica
 const TBL = {};
@@ -310,9 +327,10 @@ $('#nav').addEventListener('click', e => { const b = e.target.closest('button');
 /* ---------- INÍCIO ---------- */
 RENDER.inicio = () => {
   const tot = {r: 0, tw: 0}; D.battles.forEach(b => { if (b.tipo === 'triplo') { tot.r += b.rounds; tot.tw += Object.values(b.st).reduce((a, x) => a + x[3], 0); } else { tot.r += b.sa + b.sb; if (b.sb === 0) tot.tw++; } });
-  const titUF = UFS.map(u => ({l: u, h: `${u} <span class="muted small">${esc(D.ufs[u])}</span>`, v: USTATS[u].tit})).filter(x => x.v).sort((a, b) => b.v - a.v);
-  const perYear = YEARS.map(y => ({l: labY(y), v: new Set(D.battles.filter(b => b.ano === y).flatMap(b => b.participantes || [b.a, b.b])).size}));
-  const statesYear = YEARS.map(y => ({l: labY(y), v: new Set(D.battles.filter(b => b.ano === y).flatMap(b => (b.participantes || [b.a, b.b]).map(ufOf))).size}));
+  const titUF = UFS.map(u => ({h: `<a onclick="goUF('${u}')">${flag(u)}${esc(D.ufs[u])}</a> <span class="muted small">${u}</span>`, v: USTATS[u].tit,
+    sub: YEARS.filter(y => ufOf(D.champions[y].campeao) === u).map(y => `${esc(nm(D.champions[y].campeao))} ${labY(y)}`).join(' · ')})).filter(x => x.v).sort((a, b) => b.v - a.v);
+  const perYear = YEARS.map(y => ({h: `<a onclick="goYear(${y})">${labY(y)}</a>`, v: new Set(D.battles.filter(b => b.ano === y).flatMap(b => b.participantes || [b.a, b.b])).size}));
+  const statesYear = YEARS.map(y => ({h: `<a onclick="goYear(${y})">${labY(y)}</a>`, v: new Set(D.battles.filter(b => b.ano === y).flatMap(b => (b.participantes || [b.a, b.b]).map(ufOf))).size}));
   $('#t-inicio').innerHTML = `
   <div class="kpis">
     ${kpi(YEARS.length, 'Edições nacionais', `${YEARS[0]} a ${YEARS[YEARS.length - 1]}`)}
@@ -325,14 +343,15 @@ RENDER.inicio = () => {
   </div>
   <div class="grid g2">
     <div class="card"><h3>Campeões nacionais</h3>
-      <div class="tw"><table><thead><tr><th>Ano</th><th>Campeão</th><th>Vice</th><th class="n">Final</th><th>Campeão estadual?</th></tr></thead><tbody>
-      ${YEARS.map(y => { const c = D.champions[y]; const e = estBy[ufOf(c.campeao) + '|' + y]; const isEst = e && e.mc === c.campeao;
-        return `<tr><td><a onclick="goYear(${y})">${labY(y)}</a></td><td>🏆 ${mcFull(c.campeao)}</td><td>${mcFull(c.vice)}</td><td class="n">${c.placar}</td><td>${isEst ? '<span class="chip win">Sim</span>' : '<span class="chip">Não</span>'}</td></tr>`; }).join('')}
+      <div class="tw"><table><thead><tr><th>Ano</th><th>Campeão</th><th>Vice</th><th class="n">Final</th><th>Campeão estadual?<div style="font-weight:500;text-transform:none;letter-spacing:0">campeão · vice</div></th></tr></thead><tbody>
+      ${YEARS.map(y => { const c = D.champions[y];
+        const sn = id => vagaOf(id, y) === 'estadual' ? `<span class="chip win" data-tip="${esc(nm(id))} era o campeão estadual de ${ufOf(id)} em ${labY(y)}">Sim</span>` : `<span class="chip" data-tip="${esc(nm(id))} não era o campeão estadual de ${ufOf(id)} em ${labY(y)}${vagaOf(id, y) === 'repescagem' ? ' (repescagem)' : ''}">Não</span>`;
+        return `<tr><td><a onclick="goYear(${y})">${labY(y)}</a></td><td>🏆 ${mcFull(c.campeao)}</td><td>${mcFull(c.vice)}</td><td class="n">${c.placar}</td><td>${sn(c.campeao)} ${sn(c.vice)}</td></tr>`; }).join('')}
       </tbody></table></div></div>
-    <div class="card"><h3>Títulos nacionais por estado</h3>${bars(titUF)}
+    <div class="card"><h3>Títulos nacionais por estado</h3>${rankList(titUF, v => v === 1 ? 'título' : 'títulos', true)}
       <p class="muted small" style="margin-top:12px">${UFS.filter(u => !USTATS[u].tit).length} estados ainda não têm título nacional.</p></div>
-    <div class="card"><h3>MCs por edição</h3>${bars(perYear)}</div>
-    <div class="card"><h3>Estados representados por edição</h3>${bars(statesYear)}</div>
+    <div class="card"><h3>MCs por edição</h3>${rankList(perYear, () => 'MCs')}</div>
+    <div class="card"><h3>Estados representados por edição</h3>${rankList(statesYear, () => 'estados')}</div>
   </div>`;
 };
 
@@ -368,9 +387,9 @@ RENDER.estados = () => {
   <div class="card">
     <div class="row"><label class="f">Estado<select id="ufsel">${UFS.map(u => `<option value="${u}" ${u === selUF ? 'selected' : ''}>${u} — ${esc(D.ufs[u])}</option>`).join('')}</select></label>
       <div class="sp"></div><span class="muted small">ou clique na sigla</span></div>
-    <div class="ufgrid">${UFS.map(u => `<button class="${u === selUF ? 'on' : ''}" onclick="goUF('${u}')">${u}<small>${USTATS[u].bat} bat.</small></button>`).join('')}</div>
+    <div class="ufgrid">${UFS.map(u => `<button class="${u === selUF ? 'on' : ''}" onclick="goUF('${u}')">${flag(u)}${u}<small>${USTATS[u].bat} bat.</small></button>`).join('')}</div>
   </div>
-  <h2 style="margin-top:20px">${esc(s.nome)} <span class="chip">${selUF}</span></h2>
+  <h2 style="margin-top:20px">${esc(s.nome)} ${ufChip(selUF)}</h2>
   <div class="kpis">
     ${kpi(s.tit, 'Títulos nacionais')}${kpi(s.vice, 'Vices')}${kpi(s.ed + '/' + YEARS.length, 'Edições com representante')}
     ${kpi(s.mcs, 'MCs diferentes')}${kpi(s.bat, 'Batalhas', `${s.vit}V · ${s.der}D`)}${kpi(f1(s.ap), 'Aproveitamento')}
@@ -387,11 +406,14 @@ RENDER.estados = () => {
       ${reps.map(({y, r, e}) => r.length ? r.map((x, i) => `<tr><td>${i ? '' : labY(y)}</td><td>${mcLink(x.id)}</td><td class="res-${x.c.std}">${x.c.std === 'Campeão' ? '🏆 ' : ''}${x.c.std}</td><td class="n">${x.c.w}/${x.c.n}</td><td>${vagaChip(x.id, y)}</td></tr>`).join('') : `<tr><td>${labY(y)}</td><td colspan="4" class="muted">sem representante</td></tr>`).join('')}
     </tbody></table></div></div>
     <div class="card"><h3>Campeões estaduais de ${selUF}</h3><div class="tw"><table><thead><tr><th>Ano</th><th>Campeão estadual</th><th>No nacional do mesmo ano</th></tr></thead><tbody>${estRows}</tbody></table></div>
-      ${estTop.length ? `<h3 style="margin-top:16px">Maiores campeões estaduais</h3>${bars(estTop.slice(0, 8).map(x => ({l: estName(x.e), h: x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome), v: x.n, tip: esc(estName(x.e)) + ': ' + x.anos.join(', ')})))}` : ''}
+      ${estTop.length ? `<h3 style="margin-top:16px">Maiores campeões estaduais</h3>${bars(estTop.slice(0, 8).map(x => ({h: x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome), v: x.n, sub: x.anos.join(' · ')})), v => v, {unit: v => v === 1 ? 'título' : 'títulos'})}` : ''}
     </div>
     <div class="card"><h3>${selUF} contra outros estados</h3>
-      <div class="tw"><table><thead><tr><th>Estado</th><th class="n">Batalhas</th><th class="n">V</th><th class="n">D</th><th class="n">% Vit.</th></tr></thead><tbody>
-      ${vsRows.map(x => `<tr><td><a onclick="goVS('${selUF}','${x.u}')">${x.u}</a> <span class="muted small">${esc(D.ufs[x.u])}</span></td><td class="n">${x.t}</td><td class="n">${x.v}</td><td class="n">${x.d}</td><td class="n">${f1(pct(x.v, x.t))}</td></tr>`).join('') || '<tr><td colspan=5 class="empty">Sem confrontos</td></tr>'}
+      <div class="tw"><table class="vsx"><tbody>
+      ${vsRows.map(x => `<tr onclick="goVS('${selUF}','${x.u}')" style="cursor:pointer" data-tip="${x.t} batalha(s) — clique para ver">
+        <td class="l">${flag(selUF)}<b>${selUF}</b></td>
+        <td class="sc ${x.v > x.d ? 'w' : ''}">${x.v}</td><td class="x">×</td><td class="sc ${x.d > x.v ? 'w' : ''}">${x.d}</td>
+        <td class="r"><b>${x.u}</b>${flag(x.u)}<span class="muted small">${esc(D.ufs[x.u])}</span></td></tr>`).join('') || '<tr><td class="empty">Sem confrontos</td></tr>'}
       </tbody></table></div></div>
     <div class="card"><h3>Ranking interno de ${selUF}</h3><div id="tb-uf">${sortTable('tb-uf', [{k: 'nome', l: 'MC', f: r => mcLink(r.id)}, ...STATCOLS], ids.map(id => MSTATS[id]), {k: 'bat'})}</div></div>
   </div>`;
@@ -436,10 +458,10 @@ RENDER.geral = () => {
   <div class="card"><div class="row"><h3 style="margin:0">Comparativo</h3><div class="sp"></div>
     <div class="seg">${Object.entries(metrics).map(([k, v]) => `<button class="${k === geralMetric ? 'on' : ''}" onclick="geralMetric='${k}';RENDER.geral()">${v[0].replace(/ \(.*/, '')}</button>`).join('')}</div></div>
     <p class="muted small">${lab}</p>
-    ${bars(rows.filter(filt).map(r => ({l: r.uf, h: `<a onclick="goUF('${r.uf}')">${r.uf}</a> <span class="muted small">${esc(r.nome)}</span>`, v: get(r)})).sort((a, b) => b.v - a.v), fmt)}
+    ${bars(rows.filter(filt).map(r => ({h: `<a onclick="goUF('${r.uf}')">${flag(r.uf)}${esc(r.nome)}</a> <span class="muted small">${r.uf}</span>`, v: get(r)})).sort((a, b) => b.v - a.v), fmt)}
   </div>
   <div class="card"><h3>Tabela completa</h3><p class="muted small">Clique no cabeçalho para ordenar. Batalhas entre MCs do mesmo estado contam uma vitória e uma derrota para o estado.</p>
-  <div id="tb-geral">${sortTable('tb-geral', [{k: 'uf', l: 'UF', f: r => `<a onclick="goUF('${r.uf}')">${r.uf}</a>`}, {k: 'nome', l: 'Estado'}, {k: 'mcs', l: 'MCs', n: 1}, {k: 'part', l: 'Particip.', n: 1}, {k: 'ed', l: 'Edições', n: 1}, {k: 'tit', l: 'Títulos', n: 1}, {k: 'vice', l: 'Vices', n: 1}, {k: 'fin', l: 'Finais', n: 1}, {k: 'semi', l: 'Semis', n: 1}, {k: 'bat', l: 'Batalhas', n: 1}, {k: 'vit', l: 'V', n: 1}, {k: 'der', l: 'D', n: 1}, {k: 'ap', l: '% Vit.', n: 1, f: r => f1(r.ap)}, {k: 'r', l: 'Rounds', n: 1}, {k: 'rv', l: 'R. venc.', n: 1}, {k: 'apr', l: '% Rounds', n: 1, f: r => f1(r.apr)}, {k: 'td', l: 'Twolala +', n: 1}, {k: 'tt', l: 'Twolala −', n: 1}, {k: 'estTit', l: 'Estaduais', n: 1}, {k: 'estDist', l: 'Camp. est. dif.', n: 1}, {k: 'best', l: 'Melhor campanha', v: r => r.best ? -r.best.lvl : -99, f: r => r.best ? `${r.best.std} <span class="muted small">${esc(nm(r.best.id))} ${labY(r.best.ano)}</span>` : '—'}], rows, {k: 'tit'})}</div></div>`;
+  <div id="tb-geral">${sortTable('tb-geral', [{k: 'uf', l: 'UF', f: r => `<a onclick="goUF('${r.uf}')">${flag(r.uf)}${r.uf}</a>`}, {k: 'nome', l: 'Estado'}, {k: 'mcs', l: 'MCs', n: 1}, {k: 'part', l: 'Particip.', n: 1}, {k: 'ed', l: 'Edições', n: 1}, {k: 'tit', l: 'Títulos', n: 1}, {k: 'vice', l: 'Vices', n: 1}, {k: 'fin', l: 'Finais', n: 1}, {k: 'semi', l: 'Semis', n: 1}, {k: 'bat', l: 'Batalhas', n: 1}, {k: 'vit', l: 'V', n: 1}, {k: 'der', l: 'D', n: 1}, {k: 'ap', l: '% Vit.', n: 1, f: r => f1(r.ap)}, {k: 'r', l: 'Rounds', n: 1}, {k: 'rv', l: 'R. venc.', n: 1}, {k: 'apr', l: '% Rounds', n: 1, f: r => f1(r.apr)}, {k: 'td', l: 'Twolala +', n: 1}, {k: 'tt', l: 'Twolala −', n: 1}, {k: 'estTit', l: 'Estaduais', n: 1}, {k: 'estDist', l: 'Camp. est. dif.', n: 1}, {k: 'best', l: 'Melhor campanha', v: r => r.best ? -r.best.lvl : -99, f: r => r.best ? `${r.best.std} <span class="muted small">${esc(nm(r.best.id))} ${labY(r.best.ano)}</span>` : '—'}], rows, {k: 'tit'})}</div></div>`;
 };
 
 /* ---------- RANKING MCs ---------- */
@@ -454,7 +476,7 @@ RENDER.ranking = () => {
   const draw = () => {
     const rows = ACTIVE.map(id => MSTATS[id]).filter(r => (!rkUF || r.uf === rkUF) && (!rkQ || r.nome.toLowerCase().includes(rkQ.toLowerCase())));
     $('#rkn').textContent = rows.length + ' MCs';
-    $('#tb-rank').innerHTML = sortTable('tb-rank', [{k: 'pos', l: '#', f: (r, i) => i + 1, v: r => 0}, {k: 'nome', l: 'MC', f: r => mcLink(r.id)}, {k: 'uf', l: 'UF', f: r => `<a onclick="goUF('${r.uf}')">${r.uf}</a>`}, ...STATCOLS, {k: 'best', l: 'Melhor campanha', v: r => -r.best.lvl, f: r => `${r.best.std} <span class="muted small">${labY(r.best.ano)}</span>`}], rows, {k: 'vit'});
+    $('#tb-rank').innerHTML = sortTable('tb-rank', [{k: 'pos', l: '#', f: (r, i) => i + 1, v: r => 0}, {k: 'nome', l: 'MC', f: r => mcLink(r.id)}, {k: 'uf', l: 'UF', f: r => `<a onclick="goUF('${r.uf}')">${flag(r.uf)}${r.uf}</a>`}, ...STATCOLS, {k: 'best', l: 'Melhor campanha', v: r => -r.best.lvl, f: r => `${r.best.std} <span class="muted small">${labY(r.best.ano)}</span>`}], rows, {k: 'vit'});
   };
   draw();
   $('#rkq').oninput = e => { rkQ = e.target.value; draw(); };
@@ -490,9 +512,9 @@ RENDER.edicoes = () => {
     <div class="card"><div class="row" style="margin-bottom:12px"><h3 style="margin:0">Chaveamento</h3><div class="sp"></div><div class="champ row" style="padding:8px 14px;gap:10px"><span>🏆</span><span class="bebas" style="font-size:26px">${mcLink(c.campeao)}</span>${ufChip(ufOf(c.campeao))}<span class="small ink2">venceu ${esc(nm(c.vice))} (${ufOf(c.vice)}) por ${c.placar}</span></div></div><div class="bracket">
       ${PHASES[y].map(f => `<div class="col"><h4>${f} · ${bs.filter(b => b.fase === f).length}</h4><div class="stack">${bs.filter(b => b.fase === f).map(btCard).join('')}</div></div>`).join('')}
     </div></div>
-    <div class="card"><h3>Por estado</h3><table><tbody>${Object.entries(byUF).sort().map(([u, l]) => `<tr><td><a onclick="goUF('${u}')">${u}</a></td><td style="white-space:normal">${l.map(p => { const cc = campaign(p, y); return `${mcLink(p)} <span class="muted small">${cc.std}</span>${vagaOf(p, y) === 'repescagem' ? ' <span class="chip loss" style="font-size:9px">rep.</span>' : ''}`; }).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
+    <div class="card"><h3>Por estado</h3><table><tbody>${Object.entries(byUF).sort().map(([u, l]) => `<tr><td><a onclick="goUF('${u}')">${flag(u)}${u}</a></td><td style="white-space:normal">${l.map(p => { const cc = campaign(p, y); return `${mcLink(p)} <span class="muted small">${cc.std}</span>${vagaOf(p, y) === 'repescagem' ? ' <span class="chip loss" style="font-size:9px">rep.</span>' : ''}`; }).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
   </div>
-  ${ests.length ? `<div class="card"><h3>Campeões estaduais de ${labY(y)}</h3><div class="row" style="gap:6px">${ests.map(e => { const went = e.mc && parts.includes(e.mc); return `<span class="chip ${went ? 'win' : ''}" data-tip="${went ? 'Disputou o nacional' : 'Não aparece no chaveamento nacional'}">${e.uf} · ${esc(estName(e))}</span>`; }).join('')}</div><p class="muted small" style="margin-top:8px">Em azul: campeão estadual que disputou o nacional deste ano.</p></div>` : ''}`;
+  ${ests.length ? `<div class="card"><h3>Campeões estaduais de ${labY(y)}</h3><div class="row" style="gap:6px">${ests.map(e => { const went = e.mc && parts.includes(e.mc); return `<span class="chip ${went ? 'win' : ''}" data-tip="${went ? 'Disputou o nacional' : 'Não aparece no chaveamento nacional'}">${flag(e.uf)}${e.uf} · ${esc(estName(e))}</span>`; }).join('')}</div><p class="muted small" style="margin-top:8px">Em azul: campeão estadual que disputou o nacional deste ano.</p></div>` : ''}`;
 };
 
 /* ---------- CONFRONTOS ---------- */
@@ -526,8 +548,8 @@ RENDER.confrontos = () => {
   <div class="card"><h3>Matriz de confrontos</h3>
     <p class="muted small">Linha = estado, coluna = adversário. O número é <b>vitórias–derrotas</b> da linha contra a coluna. Clique numa célula para ver as batalhas.</p>
     <div class="legend" style="margin-bottom:10px"><span><span class="sw" style="background:var(--win)"></span>linha venceu mais</span><span><span class="sw" style="background:#4a4a55"></span>empate</span><span><span class="sw" style="background:var(--loss)"></span>linha perdeu mais</span><span><span class="sw" style="background:repeating-linear-gradient(45deg,#2a2a32 0 3px,#141418 3px 6px)"></span>mesmo estado</span></div>
-    <div style="overflow:auto"><table class="mx"><thead><tr><th></th>${ufs.map(u => `<th>${u}</th>`).join('')}</tr></thead><tbody>
-    ${ufs.map(a => `<tr><th>${a}</th>${ufs.map(b => { const x = M[a][b], t = x.v + x.d;
+    <div style="overflow:auto"><table class="mx"><thead><tr><th></th>${ufs.map(u => `<th>${flag(u)}<br>${u}</th>`).join('')}</tr></thead><tbody>
+    ${ufs.map(a => `<tr><th style="text-align:left;white-space:nowrap;padding-right:4px">${flag(a)}${a}</th>${ufs.map(b => { const x = M[a][b], t = x.v + x.d;
       if (a === b) return `<td class="self ${t ? 'c' : ''}" ${t ? `onclick="goVS('${a}','${b}')" data-tip="${a}: ${x.v} batalha(s) entre MCs do próprio estado"` : ''}>${t ? x.v : ''}</td>`;
       return t ? `<td class="c" style="${color(x.v - x.d, t)}" onclick="goVS('${a}','${b}')" data-tip="<b>${a} × ${b}</b><br>${x.v} vitória(s), ${x.d} derrota(s)">${x.v}-${x.d}</td>` : '<td class="e"></td>'; }).join('')}</tr>`).join('')}
     </tbody></table></div>
@@ -542,9 +564,9 @@ RENDER.confrontos = () => {
     <div style="margin-top:12px">${mA && mB ? (mlist.length ? `<p>${mcFull(mA)} <b>${mlist.filter(d => d.w === mA).length} × ${mlist.filter(d => d.w === mB).length}</b> ${mcFull(mB)}</p><table>${DTH}<tbody>${mlist.map(duelRow).join('')}</tbody></table>` : '<div class="empty">Nunca se enfrentaram.</div>') : '<div class="muted small">Selecione dois MCs.</div>'}</div>
   </div>
   <div class="grid g3" style="margin-top:14px">
-    <div class="card"><h3>Duelos de estados mais frequentes</h3><table><thead><tr><th>Confronto</th><th class="n">Bat.</th><th class="n">Placar</th></tr></thead><tbody>${pairs.slice(0, 15).map(p => `<tr><td><a onclick="goVS('${p.a}','${p.b}')">${p.a} × ${p.b}</a></td><td class="n">${p.t}</td><td class="n">${p.v}–${p.d}</td></tr>`).join('')}</tbody></table></div>
+    <div class="card"><h3>Duelos de estados mais frequentes</h3><table><thead><tr><th>Confronto</th><th class="n">Bat.</th><th class="n">Placar</th></tr></thead><tbody>${pairs.slice(0, 15).map(p => `<tr><td><a onclick="goVS('${p.a}','${p.b}')">${flag(p.a)}${p.a} × ${flag(p.b)}${p.b}</a></td><td class="n">${p.t}</td><td class="n">${p.v}–${p.d}</td></tr>`).join('')}</tbody></table></div>
     <div class="card"><h3>Revanches (MCs que se enfrentaram mais de uma vez)</h3><table><tbody>${rev.map(l => { const [x, y] = [l[0].w, l[0].l]; return `<tr><td style="white-space:normal">${mcFull(x)} × ${mcFull(y)}<div class="muted small">${l.map(d => `${labY(d.b.ano)} ${d.b.fase}: ${esc(nm(d.w))} ${d.triplo ? '(double three)' : d.sw + 'x' + d.sl}`).join(' · ')}</div></td></tr>`; }).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table></div>
-    <div class="card"><h3>Batalhas entre MCs do mesmo estado</h3><table><tbody>${intra.map(x => `<tr><td><a onclick="goVS('${x.u}','${x.u}')">${x.u}</a></td><td class="n">${x.n}</td></tr>`).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table></div>
+    <div class="card"><h3>Batalhas entre MCs do mesmo estado</h3><table><tbody>${intra.map(x => `<tr><td><a onclick="goVS('${x.u}','${x.u}')">${flag(x.u)}${x.u}</a></td><td class="n">${x.n}</td></tr>`).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table></div>
   </div>`;
   $('#vsa').onchange = e => { vsA = e.target.value; RENDER.confrontos(); $('#vsbox').scrollIntoView(); };
   $('#vsb').onchange = e => { vsB = e.target.value; RENDER.confrontos(); $('#vsbox').scrollIntoView(); };
@@ -571,11 +593,11 @@ RENDER.estaduais = () => {
   <div class="card"><div class="legend" style="margin-bottom:10px">Ponto = resultado no nacional do mesmo ano:
     <span><span class="sw" style="background:var(--gold);border-radius:50%"></span>campeão</span><span><span class="sw" style="background:#e6e6e6;border-radius:50%"></span>vice</span><span><span class="sw" style="background:var(--win);border-radius:50%"></span>semifinal</span><span><span class="sw" style="background:var(--ink2);border-radius:50%"></span>outra fase</span><span><span class="sw" style="border:1px solid var(--muted);border-radius:50%"></span>não disputou</span><span>· <b>N×</b> = total de títulos estaduais</span></div>
   <div class="tw" style="max-height:none"><table class="est"><thead><tr><th>Estado</th>${D.est_years.map(([, l]) => `<th>${l}</th>`).join('')}<th class="n">Títulos</th></tr></thead><tbody>
-  ${UFS.map(u => `<tr><td><a onclick="goUF('${u}')"><b>${u}</b></a></td>${D.est_years.map(([y, l]) => cell(u, y, l)).join('')}<td class="n">${EST.filter(e => e.uf === u).length}</td></tr>`).join('')}
+  ${UFS.map(u => `<tr><td><a onclick="goUF('${u}')">${flag(u)}<b>${u}</b></a></td>${D.est_years.map(([y, l]) => cell(u, y, l)).join('')}<td class="n">${EST.filter(e => e.uf === u).length}</td></tr>`).join('')}
   </tbody></table></div></div>
   <div class="grid g2" style="margin-top:14px">
-    <div class="card"><h3>Mais títulos estaduais</h3>${bars(top.filter(x => x.n > 1).map(x => ({l: estName(x.e), h: `${x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome)} <span class="muted small">${x.e.uf}</span>`, v: x.n, tip: esc(estName(x.e)) + ' (' + x.e.uf + '): ' + x.anos.join(', ')})))}</div>
-    <div class="card"><h3>Estaduais disputados por ano</h3>${bars(D.est_years.map(([y, l]) => ({l, v: EST.filter(e => e.ano === y).length})))}</div>
+    <div class="card"><h3>Mais títulos estaduais</h3>${bars(top.filter(x => x.n > 1).map(x => ({h: `${x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome)} <span class="muted small">${flag(x.e.uf)}${x.e.uf}</span>`, v: x.n, sub: x.anos.join(' · ')})), v => v, {unit: () => 'títulos'})}</div>
+    <div class="card"><h3>Estaduais disputados por ano</h3>${bars(D.est_years.map(([y, l]) => ({l, v: EST.filter(e => e.ano === y).length})), v => v, {unit: () => 'estaduais', ranked: false})}</div>
   </div>`;
 };
 
@@ -640,7 +662,7 @@ RENDER.repescagem = () => {
   </tbody></table></div></div>
   <div class="grid g2" style="margin-top:14px">
     <div class="card"><h3>Ranking dos repescados</h3><div id="tb-rep">${sortTable('tb-rep', [{k: 'nome', l: 'MC', f: r => mcLink(r.id)}, {k: 'uf', l: 'UF'}, {k: 'vezes', l: 'Vezes', n: 1}, {k: 'anos', l: 'Anos'}, {k: 'bat', l: 'Bat.', n: 1}, {k: 'vit', l: 'V', n: 1}, {k: 'der', l: 'D', n: 1}, {k: 'ap', l: '% Vit.', n: 1, f: r => f1(r.ap)}, {k: 'td', l: 'Twolala +', n: 1}, {k: 'best', l: 'Melhor', v: r => -r.best, f: r => r.bestL}], mcRows, {k: 'vit'})}</div></div>
-    <div class="card"><h3>Repescados por estado</h3>${bars(Object.entries(byUF).map(([u, v]) => ({l: u, h: `<a onclick="goUF('${u}')">${u}</a> <span class="muted small">${esc(D.ufs[u])}</span>`, v})).sort((a, b) => b.v - a.v))}</div>
+    <div class="card"><h3>Repescados por estado</h3>${bars(Object.entries(byUF).map(([u, v]) => ({h: `<a onclick="goUF('${u}')">${flag(u)}${esc(D.ufs[u])}</a> <span class="muted small">${u} · ${R.filter(r => ufOf(r.id) === u).map(r => esc(nm(r.id)) + ' ' + labY(r.y)).join(', ')}</span>`, v})).sort((a, b) => b.v - a.v), v => v, {unit: v => v === 1 ? 'vaga' : 'vagas'})}</div>
   </div>
   <div class="grid g2" style="margin-top:14px">
     <div class="card"><h3>Repescado × campeão estadual (${rw}–${ew})</h3><div class="tw"><table><thead><tr><th>Ano</th><th>Fase</th><th>Vencedor</th><th class="n">Placar</th><th>Perdedor</th></tr></thead><tbody>
@@ -662,8 +684,8 @@ function recCard(k, items, fmt = v => v, note = '') {
 }
 function rankBy(list, get, filt = () => true) { return list.filter(filt).map(x => ({...x, v: get(x)})).filter(x => x.v > 0).sort((a, b) => b.v - a.v); }
 RENDER.recordes = () => {
-  const M = ACTIVE.map(id => ({...MSTATS[id], h: `${mcLink(id)} <span class="chip">${ufOf(id)}</span>`}));
-  const U = UFS.map(u => ({...USTATS[u], h: `<a onclick="goUF('${u}')">${u}</a>`}));
+  const M = ACTIVE.map(id => ({...MSTATS[id], h: `${mcLink(id)} ${ufChip(ufOf(id))}`}));
+  const U = UFS.map(u => ({...USTATS[u], h: `<a onclick="goUF('${u}')">${flag(u)}${u}</a>`}));
   // sequências
   const streak = id => { let s = 0, b = 0; PART[id].forEach(p => { s = p.won ? s + 1 : 0; b = Math.max(b, s); }); return b; };
   const lose = id => { let s = 0, b = 0; PART[id].forEach(p => { s = !p.won ? s + 1 : 0; b = Math.max(b, s); }); return b; };
@@ -677,15 +699,15 @@ RENDER.recordes = () => {
   const ufFinalPair = finals.filter(f => ufOf(f.a) === ufOf(f.b));
   // estaduais
   const cnt = {}; EST.forEach(e => { const k = estKey(e); (cnt[k] = cnt[k] || {e, n: 0, ys: []}); cnt[k].n++; cnt[k].ys.push(e.ano); });
-  const EC = Object.values(cnt).map(x => ({...x, h: `${x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome)} <span class="chip">${x.e.uf}</span>`}));
+  const EC = Object.values(cnt).map(x => ({...x, h: `${x.e.mc ? mcLink(x.e.mc) : esc(x.e.nome)} ${ufChip(x.e.uf)}`}));
   const ESEQ = D.est_years.map(([y]) => y);
   const consec = x => { const idx = x.ys.map(y => ESEQ.indexOf(y)).sort((a, b) => a - b); let s = 0, b = 0, p = -9; idx.forEach(i => { s = i === p + 1 ? s + 1 : 1; p = i; b = Math.max(b, s); }); return b; };
   const UE = UFS.map(u => { const l = EST.filter(e => e.uf === u); const c = {}; l.forEach(e => c[estKey(e)] = (c[estKey(e)] || 0) + 1);
-    const mx = Math.max(0, ...Object.values(c)); return {uf: u, h: `<a onclick="goUF('${u}')">${u}</a>`, n: l.length, dist: Object.keys(c).length, dom: l.length >= 4 ? pct(mx, l.length) : 0,
+    const mx = Math.max(0, ...Object.values(c)); return {uf: u, h: `<a onclick="goUF('${u}')">${flag(u)}${u}</a>`, n: l.length, dist: Object.keys(c).length, dom: l.length >= 4 ? pct(mx, l.length) : 0,
       nac: l.filter(e => e.mc && YEARS.includes(e.ano) && D.champions[e.ano].campeao === e.mc).length,
       went: l.filter(e => e.mc && YEARS.includes(e.ano) && PART[e.mc].some(p => p.b.ano === e.ano)).map(e => campaign(e.mc, e.ano)).filter(c => c.lvl <= 2).length}; });
   const doubleCh = EST.filter(e => e.mc && YEARS.includes(e.ano) && D.champions[e.ano].campeao === e.mc);
-  const estThenNac = ACTIVE.filter(id => EST.some(e => e.mc === id)).map(id => ({id, h: `${mcLink(id)} <span class="chip">${ufOf(id)}</span>`, v: EST.filter(e => e.mc === id).length + MSTATS[id].tit * 1, est: EST.filter(e => e.mc === id).length, tit: MSTATS[id].tit}));
+  const estThenNac = ACTIVE.filter(id => EST.some(e => e.mc === id)).map(id => ({id, h: `${mcLink(id)} ${ufChip(ufOf(id))}`, v: EST.filter(e => e.mc === id).length + MSTATS[id].tit * 1, est: EST.filter(e => e.mc === id).length, tit: MSTATS[id].tit}));
   const nac = `
     <h3>MCs</h3><div class="recs">
     ${recCard('Mais títulos nacionais', rankBy(M, x => x.tit))}
@@ -708,12 +730,12 @@ RENDER.recordes = () => {
     ${recCard('Campeão que perdeu menos rounds', champC.map(x => ({...x, v: x.rp})).sort((a, b) => a.v - b.v || b.n - a.n), v => v + (v === 1 ? ' round' : ' rounds'), 'Rounds cedidos na campanha do título')}
     ${recCard('Campeão com mais twolalas na campanha', champC.map(x => ({...x, v: x.tw})).sort((a, b) => b.v - a.v))}
     ${recCard('Mais títulos estaduais + nacionais', estThenNac.sort((a, b) => b.v - a.v), v => v)}
-    ${recCard('Mais vezes na repescagem', Object.entries(Object.entries(D.vagas).reduce((a, [y, o]) => { Object.entries(o).forEach(([id, v]) => { if (v === 'repescagem') a[id] = (a[id] || 0) + 1; }); return a; }, {})).map(([id, v]) => ({h: `${mcLink(id)} <span class="chip">${ufOf(id)}</span>`, v})).sort((a, b) => b.v - a.v))}
-    ${recCard('Mais vitórias como repescado', Object.entries(Object.entries(D.vagas).reduce((a, [y, o]) => { Object.entries(o).forEach(([id, v]) => { if (v === 'repescagem') a[id] = (a[id] || 0) + PART[id].filter(p => p.b.ano === +y && p.won).length; }); return a; }, {})).map(([id, v]) => ({h: `${mcLink(id)} <span class="chip">${ufOf(id)}</span>`, v})).filter(x => x.v).sort((a, b) => b.v - a.v))}
+    ${recCard('Mais vezes na repescagem', Object.entries(Object.entries(D.vagas).reduce((a, [y, o]) => { Object.entries(o).forEach(([id, v]) => { if (v === 'repescagem') a[id] = (a[id] || 0) + 1; }); return a; }, {})).map(([id, v]) => ({h: `${mcLink(id)} ${ufChip(ufOf(id))}`, v})).sort((a, b) => b.v - a.v))}
+    ${recCard('Mais vitórias como repescado', Object.entries(Object.entries(D.vagas).reduce((a, [y, o]) => { Object.entries(o).forEach(([id, v]) => { if (v === 'repescagem') a[id] = (a[id] || 0) + PART[id].filter(p => p.b.ano === +y && p.won).length; }); return a; }, {})).map(([id, v]) => ({h: `${mcLink(id)} ${ufChip(ufOf(id))}`, v})).filter(x => x.v).sort((a, b) => b.v - a.v))}
     </div>
     <h3 style="margin-top:20px">Estados</h3><div class="recs">
     ${recCard('Mais títulos nacionais', rankBy(U, x => x.tit))}
-    ${recCard('Mais finais', Object.entries(finUF).map(([u, v]) => ({h: `<a onclick="goUF('${u}')">${u}</a>`, v})).sort((a, b) => b.v - a.v))}
+    ${recCard('Mais finais', Object.entries(finUF).map(([u, v]) => ({h: `<a onclick="goUF('${u}')">${flag(u)}${u}</a>`, v})).sort((a, b) => b.v - a.v))}
     ${recCard('Mais batalhas', rankBy(U, x => x.bat))}
     ${recCard('Mais vitórias', rankBy(U, x => x.vit))}
     ${recCard('Melhor aproveitamento (mín. 10 batalhas)', rankBy(U, x => x.ap, x => x.bat >= 10), f1)}
