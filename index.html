@@ -650,6 +650,12 @@ RENDER.confrontos = () => {
   // revanches de MCs
   const mp = {}; DUELS.forEach(d => { const k = [d.w, d.l].sort().join('§'); (mp[k] = mp[k] || []).push(d); });
   const rev = Object.values(mp).filter(l => l.length > 1).sort((a, b) => b.length - a.length);
+  // possíveis revanches na edição em andamento: pares de participantes que já se enfrentaram antes
+  const prev = ED ? Object.values(mp).map(l => l.filter(d => d.b.ano !== EDY)).filter(l => l.length && IN_ATUAL.has(l[0].w) && IN_ATUAL.has(l[0].l))
+    .map(l => { const [x, y] = [l[0].w, l[0].l].sort((a, b) => nm(a).localeCompare(nm(b)));
+      const now = DUELS.filter(d => d.b.ano === EDY && ((d.w === x && d.l === y) || (d.w === y && d.l === x)));
+      return {x, y, l, now, wx: l.filter(d => d.w === x).length, wy: l.filter(d => d.w === y).length}; })
+    .sort((a, b) => b.l.length - a.l.length || b.l[b.l.length - 1].b.ano - a.l[a.l.length - 1].b.ano) : [];
   $('#t-confrontos').innerHTML = `
   <h2>Confrontos entre estados</h2>
   <div class="card"><h3>Matriz de confrontos</h3>
@@ -672,7 +678,11 @@ RENDER.confrontos = () => {
   </div>
   <div class="grid g3" style="margin-top:14px">
     <div class="card"><h3>Duelos de estados mais frequentes</h3><table><thead><tr><th>Confronto</th><th class="n">Bat.</th><th class="n">Placar</th></tr></thead><tbody>${pairs.slice(0, 15).map(p => `<tr><td><a onclick="goVS('${p.a}','${p.b}')">${flag(p.a)}${p.a} × ${flag(p.b)}${p.b}</a></td><td class="n">${p.t}</td><td class="n">${p.v}–${p.d}</td></tr>`).join('')}</tbody></table></div>
-    <div class="card"><h3>Revanches (MCs que se enfrentaram mais de uma vez)</h3><table><tbody>${rev.map(l => { const [x, y] = [l[0].w, l[0].l]; return `<tr><td style="white-space:normal">${mcFull(x)} × ${mcFull(y)}<div class="muted small">${l.map(d => `${labY(d.b.ano)} ${d.b.fase}: ${esc(nm(d.w))} ${d.triplo ? '(double three)' : d.sw + 'x' + d.sl}`).join(' · ')}</div></td></tr>`; }).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table></div>
+    <div class="card">${ED ? `<h3>Possíveis revanches em ${EDY}</h3><p class="muted small" style="margin-top:-4px">Participantes de ${EDY} que já se enfrentaram em nacionais anteriores (${prev.length}).</p>
+      <table style="margin-bottom:18px"><tbody>${prev.map(r => `<tr><td style="white-space:normal">${mcFull(r.x)} <b class="bebas" style="font-size:18px;margin:0 4px">${r.wx} × ${r.wy}</b> ${mcFull(r.y)}
+        ${r.now.length ? `<span class="chip gold">aconteceu em ${EDY}: ${esc(nm(r.now[0].w))} ${r.now[0].sw}x${r.now[0].sl}</span>` : ''}
+        <div class="muted small">${r.l.map(d => `${labY(d.b.ano)} ${d.b.fase}: ${esc(nm(d.w))} ${d.triplo ? '(double three)' : d.sw + 'x' + d.sl}`).join(' · ')}</div></td></tr>`).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table>` : ''}
+      <h3>Revanches (MCs que se enfrentaram mais de uma vez)</h3><table><tbody>${rev.map(l => { const [x, y] = [l[0].w, l[0].l]; return `<tr><td style="white-space:normal">${mcFull(x)} × ${mcFull(y)}<div class="muted small">${l.map(d => `${labY(d.b.ano)} ${d.b.fase}: ${esc(nm(d.w))} ${d.triplo ? '(double three)' : d.sw + 'x' + d.sl}`).join(' · ')}</div></td></tr>`; }).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table></div>
     <div class="card"><h3>Batalhas entre MCs do mesmo estado</h3><table><tbody>${intra.map(x => `<tr><td><a onclick="goVS('${x.u}','${x.u}')">${flag(x.u)}${x.u}</a></td><td class="n">${x.n}</td></tr>`).join('') || '<tr><td class="empty">Nenhuma</td></tr>'}</tbody></table></div>
   </div>`;
   $('#vsa').onchange = e => { vsA = e.target.value; RENDER.confrontos(); $('#vsbox').scrollIntoView(); };
