@@ -1,0 +1,171 @@
+{
+ "ano": 2026,
+ "atualizado": "2026-11-23T18:04:21.421Z",
+ "jogos": {
+  "1ª fase": [
+   {
+    "a": "HAVEL",
+    "b": "SUBENE",
+    "r": "2x1"
+   },
+   {
+    "a": "MCHARLES",
+    "b": "MABRU",
+    "r": "2x0"
+   },
+   {
+    "a": "NETO",
+    "b": "BLINK",
+    "r": "2x0"
+   },
+   {
+    "a": "SANTOS",
+    "b": "VITU|SC",
+    "r": "2x0"
+   },
+   {
+    "a": "XAMUEL",
+    "b": "JAYA LUUCK",
+    "r": "2x0"
+   },
+   {
+    "a": "MIKA",
+    "b": "NICK",
+    "r": "2x1"
+   },
+   {
+    "a": "BOBBY MIDYA",
+    "b": "GR",
+    "r": "2x0"
+   },
+   {
+    "a": "MARTIN",
+    "b": "APAXI",
+    "r": "2x0"
+   },
+   {
+    "a": "HOGUE",
+    "b": "KAMUI",
+    "r": "2x1"
+   },
+   {
+    "a": "IKE",
+    "b": "STASH",
+    "r": "2x0"
+   },
+   {
+    "a": "NOVENTA",
+    "b": "JEFFE|DF",
+    "r": "2x1"
+   },
+   {
+    "a": "KAELL",
+    "b": "RICO MESQUITA",
+    "r": "2x0"
+   },
+   {
+    "a": "JOTAPE",
+    "b": "WL BXD",
+    "r": "2x1"
+   },
+   {
+    "a": "HW",
+    "b": "FOGUINHO",
+    "r": "2x1"
+   },
+   {
+    "a": "VITU",
+    "b": "MANEL",
+    "r": "2x0"
+   },
+   {
+    "a": "MANO GE",
+    "b": "GAJO",
+    "r": "2x0"
+   }
+  ],
+  "2ª fase": [
+   {
+    "a": "JOTAPE",
+    "b": "MIKA",
+    "r": "2x0"
+   },
+   {
+    "a": "NOVENTA",
+    "b": "HAVEL",
+    "r": "2x0"
+   },
+   {
+    "a": "HOGUE",
+    "b": "VITU",
+    "r": "2x1"
+   },
+   {
+    "a": "XAMUEL",
+    "b": "KAELL",
+    "r": "2x0"
+   },
+   {
+    "a": "BOBBY MIDYA",
+    "b": "MCHARLES",
+    "r": "2x1"
+   },
+   {
+    "a": "MARTIN",
+    "b": "NETO",
+    "r": "2x0"
+   },
+   {
+    "a": "IKE",
+    "b": "HW",
+    "r": "2x1"
+   },
+   {
+    "a": "SANTOS",
+    "b": "MANO GE",
+    "r": "2x0"
+   }
+  ],
+  "Quartas de final": [
+   {
+    "a": "NOVENTA",
+    "b": "MARTIN",
+    "r": "2x0"
+   },
+   {
+    "a": "XAMUEL",
+    "b": "BOBBY MIDYA",
+    "r": "2x0"
+   },
+   {
+    "a": "JOTAPE",
+    "b": "IKE",
+    "r": "2x1"
+   },
+   {
+    "a": "HOGUE",
+    "b": "SANTOS",
+    "r": "2x0"
+   }
+  ],
+  "Semifinal": [
+   {
+    "a": "NOVENTA",
+    "b": "HOGUE",
+    "r": "2x0"
+   },
+   {
+    "a": "JOTAPE",
+    "b": "XAMUEL",
+    "r": "2x0"
+   }
+  ],
+  "Final": [
+   {
+    "a": "JOTAPE",
+    "b": "NOVENTA",
+    "r": "2x1"
+   }
+  ]
+ }
+}
